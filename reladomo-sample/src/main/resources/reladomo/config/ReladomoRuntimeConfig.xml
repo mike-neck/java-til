@@ -1,0 +1,6 @@
+<MithraRuntime>
+    <ConnectionManager className="com.example.util.H2ConnectionManager">
+        <MithraObjectConfiguration cacheType="none" className="com.example.models.ObjectSequence"/>
+        <MithraObjectConfiguration cacheType="partial" className="com.example.models.Person"/>
+    </ConnectionManager>
+</MithraRuntime>
