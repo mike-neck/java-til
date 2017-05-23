@@ -76,7 +76,7 @@ task genDdl {
     doLast {
         ant.genDdl xml: "$projectDir/src/main/resources/reladomo/models/ReladomoClassList.xml",
                 generatedDir: "$buildDir/generated-db/sql",
-                databaseType: 'mysql'
+                databaseType: 'postgres'
     }
 }
 

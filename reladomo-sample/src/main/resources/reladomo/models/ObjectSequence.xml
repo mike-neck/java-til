@@ -6,7 +6,7 @@
     <ClassName>ObjectSequence</ClassName>
     <DefaultTable>object_sequence</DefaultTable>
 
-    <Attribute name="simulatedSequenceName" javaType="java.lang.String" columnName="sequence_name" primaryKey="true" 
+    <Attribute name="simulatedSequenceName" javaType="String" columnName="sequence_name" primaryKey="true" 
                maxLength="64"/>
     <Attribute name="nextValue" javaType="long" columnName="next_value"/>
 </MithraObject>
