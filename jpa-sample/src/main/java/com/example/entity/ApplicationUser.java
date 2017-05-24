@@ -19,10 +19,11 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "application_user", schema = "jpa-sample")
+@Table(name = "application_user")
 public class ApplicationUser {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -92,5 +93,17 @@ public class ApplicationUser {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, password, version);
+    }
+
+    @Override
+    public String toString() {
+        @SuppressWarnings("StringBufferReplaceableByString")
+        final StringBuilder sb = new StringBuilder("ApplicationUser{");
+        sb.append("id=").append(id);
+        sb.append(", username='").append(username).append('\'');
+        sb.append(", password='").append(password).append('\'');
+        sb.append(", version=").append(version);
+        sb.append('}');
+        return sb.toString();
     }
 }

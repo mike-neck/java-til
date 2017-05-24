@@ -17,8 +17,10 @@ package com.example;
 
 import com.example.entity.ApplicationUser;
 import com.example.repository.ApplicationUserRepository;
+import com.google.inject.persist.Transactional;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class ApplicationUserService {
 
@@ -31,7 +33,24 @@ public class ApplicationUserService {
         this.hash = hash;
     }
 
+    @Transactional
     public ApplicationUser save(final String username, final String rawPassword) {
         return repository.create(username, hash.makeHash(rawPassword));
+    }
+
+    @Transactional
+    public Optional<ApplicationUser> findForUpdate(final Long userId) {
+        final Optional<ApplicationUser> user = repository.findByIdWithOptimisticLock(userId);
+        user.map(ApplicationUser::getVersion).ifPresent(System.out::println);
+        return user;
+    }
+
+    @Transactional
+    public Optional<ApplicationUser> findForUpdateWithForceFlush(final Long userId) {
+        final Optional<ApplicationUser> user = repository.findByIdWithOptimisticLock(userId);
+        user.map(ApplicationUser::getVersion).ifPresent(System.out::println);
+        repository.forceFlush();
+        user.map(ApplicationUser::getVersion).ifPresent(System.out::println);
+        return user;
     }
 }

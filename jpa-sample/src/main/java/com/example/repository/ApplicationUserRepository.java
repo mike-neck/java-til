@@ -46,4 +46,8 @@ public class ApplicationUserRepository {
         final ApplicationUser user = em.find(ApplicationUser.class, userId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
         return Optional.ofNullable(user);
     }
+
+    public void forceFlush() {
+        em.flush();
+    }
 }
