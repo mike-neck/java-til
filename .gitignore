@@ -23,6 +23,11 @@ hs_err_pid*
 
 # idea and gradle
 .idea/
+out/
+
 build/
 !gradle-wrapper.jar
 .gradle/
+
+# jar files
+libs/
