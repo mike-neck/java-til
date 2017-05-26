@@ -14,14 +14,48 @@ repositories {
   mavenCentral()
 }
 
+task downloadSchemaspy(group: 'Setup', description: 'downloads schemaspy jar and put it to lib directory') {
+  def libDir = file('lib')
+  def jarFile = libDir.toPath().resolve('schemaspy.jar').toFile()
+  def schemaspyVersion = '6.0.0-rc1'
+  def url = URI.create(
+          "https://github.com/schemaspy/schemaspy/releases/download/v${schemaspyVersion}/schemaspy-${schemaspyVersion}.jar")
+          .toURL()
+
+  outputs.file jarFile
+  doLast {
+    if (!libDir.exists()) {
+      libDir.mkdir()
+    }
+    jarFile.bytes = url.bytes
+  }
+}
+
+configurations {
+  querydsl
+  eclipselink
+}
+
 dependencies {
   compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
   compile group: 'com.google.inject.extensions', name: 'guice-persist', version: '4.1.0'
   compile group: 'org.eclipse.persistence', name: 'eclipselink', version: '2.6.4'
+  eclipselink group: 'org.eclipse.persistence', name: 'eclipselink', version: '2.6.4'
   compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
   compile group: 'com.lambdaworks', name: 'scrypt', version: '1.4.0'
+
+  compileOnly group: 'com.querydsl', name: 'querydsl-apt', version: '4.1.4'
+  querydsl group: 'com.querydsl', name: 'querydsl-apt', version: '4.1.4'
+  compile group: 'com.querydsl', name: 'querydsl-jpa', version: '4.1.4'
 
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.0-M4'
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.0-M4'
 }
 
+task generateQuery(type: JavaCompile, description: 'processes annotations', group: 'build') {
+  source(sourceSets.main.java.asFileTree)
+  classpath = configurations.compile.asFileTree
+  options.annotationProcessorPath = configurations.querydsl.asFileTree + configurations.eclipselink.asFileTree
+  options.compilerArgs << '-proc:only' << '-processor' << 'com.querydsl.apt.jpa.JPAAnnotationProcessor'
+  destinationDir = file("$buildDir/generated")
+}
