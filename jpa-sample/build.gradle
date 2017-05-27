@@ -13,6 +13,9 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 ext {
   libDir = file('lib')
   schemaspyJar = libDir.toPath().resolve('schemaspy.jar').toFile()
+  diagramDir = file("${buildDir}/er-diagram")
+  tmpDir = file("$buildDir/tmp/diagram")
+  genDiagramShell = file("$buildDir/tmp/diagram/generate.sh")
 }
 
 repositories {
@@ -33,15 +36,24 @@ task downloadSchemaspy(group: 'Setup', description: 'downloads schemaspy jar and
           "https://github.com/schemaspy/schemaspy/releases/download/v${schemaspyVersion}/schemaspy-${schemaspyVersion}.jar")
           .toURL()
 
-  outputs.upToDateWhen {
-    schemaspyJar.exists()
-  }
+  onlyIf { !schemaspyJar.exists() }
+  outputs.upToDateWhen { schemaspyJar.exists() }
   outputs.file schemaspyJar
   doLast {
     if (!libDir.exists()) {
       libDir.mkdir()
     }
-    schemaspyJar.bytes = url.bytes
+    logger.lifecycle('start downloading schemaspy.jar')
+    logger.lifecycle("schemaspy exists: ${schemaspyJar.exists()}")
+    url.withInputStream {u ->
+      def bytes = new byte[8096]
+      schemaspyJar.withOutputStream {f ->
+        while (u.read(bytes) != -1) {
+          f.write(bytes)
+          print '.'
+        }
+      }
+    }
   }
 }
 
@@ -78,7 +90,7 @@ task generateQuery(type: JavaCompile, description: 'processes annotations', grou
 
 tasks.compileJava.dependsOn tasks.generateQuery
 
-task generateDiagram(
+task execSchemaspy(
     type: JavaExec,
     description: 'generates er-diagram',
     group: 'documentation',
@@ -87,6 +99,7 @@ task generateDiagram(
 
   outputs.file destinationDir
 
+  environment 'PATH', '/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
   classpath schemaspyJar
   main = 'org.schemaspy.Main'
   args '-t', 'mysql'
@@ -105,4 +118,45 @@ task showGenerateDiagramCommand(description: 'shows generate er-diagram command.
     logger.lifecycle "java -jar $schemaspyJar -t mysql -dp ${configurations.mysql.asPath} -db jpa_sample -host " +
             "localhost -port 3306 -s jpa_sample -u jpa -p jpa -o ${buildDir}/er-diagram"
   }
+}
+
+task generateDiagramCommand(group: 'documentation', description: 'generates er-diagram command.') {
+  outputs.file genDiagramShell
+  doLast {
+    if (!tmpDir.exists()) {
+      tmpDir.mkdirs()
+    }
+    genDiagramShell.write("""#!/usr/bin/env bash
+java -jar $schemaspyJar \\
+  -t mysql -dp ${configurations.mysql.asPath} \\
+  -db jpa_sample -host localhost -port 3306 \\
+  -s jpa_sample -u jpa -p jpa \\
+  -o $diagramDir
+""", 'UTF-8')
+    genDiagramShell.executable = true
+  }
+}
+
+task generateDiagram(type: Exec, group: 'documentation',
+        description: 'generates er-diagram',
+        dependsOn: generateDiagramCommand) {
+  executable = genDiagramShell
+  outputs.files(diagramDir)
+  environment 'JAVA_HOME', '/Users/mike/.sdkman/candidates/java/current'
+  environment 'PATH', '/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
+}
+
+task prepareShowJvmHome {
+  doLast {
+    file("$buildDir/tmp/show-jvm-home.sh").write("""#!/usr/bin/env bash
+echo ${'$'}PATH
+echo ${'$'}JAVA_HOME
+java -version
+""")
+    file("$buildDir/tmp/show-jvm-home.sh").executable = true
+  }
+}
+
+task showJvmHome(type: Exec, dependsOn: 'prepareShowJvmHome') {
+  executable = file("$buildDir/tmp/show-jvm-home.sh")
 }
