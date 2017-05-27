@@ -1,4 +1,4 @@
-USE `jpa-sample`;
+USE `jpa_sample`;
 
 CREATE TABLE application_user
 (

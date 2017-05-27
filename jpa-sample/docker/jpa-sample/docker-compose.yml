@@ -3,7 +3,7 @@ services:
   db:
     image: mysql:5.7
     environment:
-      - MYSQL_DATABASE=jpa-sample
+      - MYSQL_DATABASE=jpa_sample
       - MYSQL_USER=jpa
       - MYSQL_PASSWORD=jpa
       - MYSQL_RANDOM_ROOT_PASSWORD=yes

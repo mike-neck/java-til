@@ -10,30 +10,45 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 
+ext {
+  libDir = file('lib')
+  schemaspyJar = libDir.toPath().resolve('schemaspy.jar').toFile()
+}
+
 repositories {
   mavenCentral()
 }
 
+sourceSets {
+  main {
+    java {
+      srcDir file("$buildDir/generated")
+    }
+  }
+}
+
 task downloadSchemaspy(group: 'Setup', description: 'downloads schemaspy jar and put it to lib directory') {
-  def libDir = file('lib')
-  def jarFile = libDir.toPath().resolve('schemaspy.jar').toFile()
   def schemaspyVersion = '6.0.0-rc1'
   def url = URI.create(
           "https://github.com/schemaspy/schemaspy/releases/download/v${schemaspyVersion}/schemaspy-${schemaspyVersion}.jar")
           .toURL()
 
-  outputs.file jarFile
+  outputs.upToDateWhen {
+    schemaspyJar.exists()
+  }
+  outputs.file schemaspyJar
   doLast {
     if (!libDir.exists()) {
       libDir.mkdir()
     }
-    jarFile.bytes = url.bytes
+    schemaspyJar.bytes = url.bytes
   }
 }
 
 configurations {
   querydsl
   eclipselink
+  mysql
 }
 
 dependencies {
@@ -42,6 +57,7 @@ dependencies {
   compile group: 'org.eclipse.persistence', name: 'eclipselink', version: '2.6.4'
   eclipselink group: 'org.eclipse.persistence', name: 'eclipselink', version: '2.6.4'
   compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+  mysql group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
   compile group: 'com.lambdaworks', name: 'scrypt', version: '1.4.0'
 
   compileOnly group: 'com.querydsl', name: 'querydsl-apt', version: '4.1.4'
@@ -58,4 +74,35 @@ task generateQuery(type: JavaCompile, description: 'processes annotations', grou
   options.annotationProcessorPath = configurations.querydsl.asFileTree + configurations.eclipselink.asFileTree
   options.compilerArgs << '-proc:only' << '-processor' << 'com.querydsl.apt.jpa.JPAAnnotationProcessor'
   destinationDir = file("$buildDir/generated")
+}
+
+tasks.compileJava.dependsOn tasks.generateQuery
+
+task generateDiagram(
+    type: JavaExec,
+    description: 'generates er-diagram',
+    group: 'documentation',
+    dependsOn: tasks.downloadSchemaspy) {
+  def destinationDir = file("$buildDir/er-diagram")
+
+  outputs.file destinationDir
+
+  classpath schemaspyJar
+  main = 'org.schemaspy.Main'
+  args '-t', 'mysql'
+  args '-dp', configurations.mysql.asPath
+  args '-db', 'jpa_sample'
+  args '-host', 'localhost'
+  args '-port', '3306'
+  args '-s', 'jpa_sample'
+  args '-u', 'jpa'
+  args '-p', 'jpa'
+  args '-o', destinationDir
+}
+
+task showGenerateDiagramCommand(description: 'shows generate er-diagram command.', group: 'documentation') {
+  doLast {
+    logger.lifecycle "java -jar $schemaspyJar -t mysql -dp ${configurations.mysql.asPath} -db jpa_sample -host " +
+            "localhost -port 3306 -s jpa_sample -u jpa -p jpa -o ${buildDir}/er-diagram"
+  }
 }
