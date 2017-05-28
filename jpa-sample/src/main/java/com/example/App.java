@@ -16,6 +16,7 @@
 package com.example;
 
 import com.example.entity.ApplicationUser;
+import com.example.service.ApplicationUserService;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.persist.PersistService;
