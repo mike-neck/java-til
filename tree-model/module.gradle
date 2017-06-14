@@ -17,6 +17,7 @@ dependencies {
     compile     group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.0.Final'
     querydsl    group: 'com.querydsl', name: 'querydsl-apt', version: '4.1.4'
     compile     group: 'com.querydsl', name: 'querydsl-jpa', version: '4.1.4'
+    compileOnly group: 'org.jetbrains',name: 'annotations',  version: '15.0'
     if (!isCommon) {
         compile rootProject.project(':common')
     }
