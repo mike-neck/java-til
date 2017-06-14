@@ -1,0 +1,6 @@
+include "closure-table"
+include "common"
+include "nested-set"
+include "path-enum"
+
+rootProject.name = 'tree-model'

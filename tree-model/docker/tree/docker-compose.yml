@@ -1,0 +1,11 @@
+version: '2'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=tree
+      - MYSQL_USER=tree
+      - MYSQL_PASSWORD=tree
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    ports:
+      - "3306:3306"
