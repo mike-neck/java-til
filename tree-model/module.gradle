@@ -1,0 +1,38 @@
+apply plugin: 'java'
+
+ext {
+    generatedSources = file("$buildDir/query")
+    isCommon = project.name.contains('common')
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    querydsl
+}
+
+dependencies {
+    compile     group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.0.Final'
+    querydsl    group: 'com.querydsl', name: 'querydsl-apt', version: '4.1.4'
+    compile     group: 'com.querydsl', name: 'querydsl-jpa', version: '4.1.4'
+    if (!isCommon) {
+        compile rootProject.project(':common')
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir generatedSources
+        }
+    }
+}
+
+task generateQuery(type: JavaCompile, group: 'build') {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile.asFileTree + configurations.querydsl.asFileTree
+    destinationDir = generatedSources
+    options.compilerArgs << '-proc:only' << '-processor' << 'com.querydsl.apt.jpa.JPAAnnotationProcessor'
+}
