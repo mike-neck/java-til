@@ -39,4 +39,29 @@ CREATE TABLE path_enum_project_user(
   , CONSTRAINT path_enum_project_user_pk PRIMARY KEY (organization_id, user_id, project_id)
   , CONSTRAINT path_enum_project_user_employees_fk
 FOREIGN KEY (organization_id, user_id) REFERENCES employees (organization_id, user_id)
+  , CONSTRAINT path_enum_project_user_project_fk FOREIGN KEY (project_id) REFERENCES path_enum_project(id)
+) CHARACTER SET utf8mb4 ENGINE InnoDB;
+
+-- nested set
+
+CREATE TABLE nested_set_project(
+    id BIGINT NOT NULL PRIMARY KEY
+  , organization_id BIGINT NOT NULL
+  , name VARCHAR(30) NOT NULL
+  , left_index BIGINT NOT NULL
+  , right_index BIGINT NOT NULL
+  , CONSTRAINT nested_set_project_organization_fk FOREIGN KEY (organization_id) REFERENCES organizations(id)
+) CHARACTER SET utf8mb4 ENGINE InnoDB;
+
+CREATE INDEX nested_set_project_left_index_idx ON nested_set_project(left_index ASC);
+CREATE INDEX nested_set_project_right_index_idx ON nested_set_project(right_index DESC);
+
+CREATE TABLE nested_set_project_user(
+    organization_id BIGINT NOT NULL
+  , user_id BIGINT NOT NULL
+  , project_id BIGINT NOT NULL
+  , CONSTRAINT nested_set_project_user_pk PRIMARY KEY (organization_id, user_id, project_id)
+  , CONSTRAINT nested_set_project_user_employees_fk
+FOREIGN KEY (organization_id, user_id) REFERENCES employees (organization_id, user_id)
+  , CONSTRAINT nested_set_project_user_project_fk FOREIGN KEY (project_id) REFERENCES nested_set_project(id)
 ) CHARACTER SET utf8mb4 ENGINE InnoDB;
