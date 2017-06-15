@@ -1,12 +1,12 @@
-DELETE FROM closure_table_project_user;
-DELETE FROM closure_table_project;
-DELETE FROM project_names;
+DELETE FROM closure_table_dept_user;
+DELETE FROM closure_table_dept;
+DELETE FROM dept_names;
 
-DELETE FROM nested_set_project_user;
-DELETE FROM nested_set_project;
+DELETE FROM nested_set_dept_user;
+DELETE FROM nested_set_dept;
 
-DELETE FROM path_enum_project_user;
-DELETE FROM path_enum_project;
+DELETE FROM path_enum_dept_user;
+DELETE FROM path_enum_dept;
 
 DELETE FROM employees;
 DELETE FROM users;
