@@ -16,6 +16,8 @@ CREATE TABLE employees (
   , user_id BIGINT NOT NULL
   , version INT NOT NULL
   , CONSTRAINT employees_pk PRIMARY KEY (organization_id, user_id)
+  , CONSTRAINT employees_organization_fk FOREIGN KEY (organization_id) REFERENCES organizations(id)
+  , CONSTRAINT employees_user_fk FOREIGN KEY (user_id) REFERENCES users(id)
 ) CHARACTER SET utf8mb4 ENGINE InnoDB;
 
 -- path-enum
