@@ -20,6 +20,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 class SampleCodesTest {
 
@@ -65,10 +67,7 @@ class SampleCodesTest {
     @Disabled
     @Test
     void firstTest() {
-        final Map<Long, UserEntity> map = SampleCodesTest.mapOf(
-                kv(1L, new UserEntity(1L, "ユーザー1", "test1@example.com", "password1")),// 
-                kv(3L, new UserEntity(3L, "ユーザー3", "test3@example.com", "password3"))//
-        );
+        final Map<Long, UserEntity> map = getUsers();
 
         final UserEntity u1 = map.get(1L);
         assumeTrue(u1 != null);
@@ -87,12 +86,10 @@ class SampleCodesTest {
         assertEquals(3L, u3.getId());
     }
 
+    @Disabled
     @Test
     void secondTest() {
-        final Map<Long, UserEntity> map = SampleCodesTest.mapOf(
-                kv(1L, new UserEntity(1L, "ユーザー1", "test1@example.com", "password1")),// 
-                kv(3L, new UserEntity(3L, "ユーザー3", "test3@example.com", "password3"))//
-        );
+        final Map<Long, UserEntity> map = getUsers();
 
         final UserEntity u1 = map.get(1L);
         final UserEntity u2 = map.get(2L);
@@ -110,5 +107,45 @@ class SampleCodesTest {
                 () -> assumeTrue(u3 != null),
                 () -> assertEquals(3L, u3.getId())
         );
+    }
+
+    private Map<Long, UserEntity> getUsers() {
+        return SampleCodesTest.mapOf(
+                    kv(1L, new UserEntity(1L, "ユーザー1", "test1@example.com", "password1")),// 
+                    kv(3L, new UserEntity(3L, "ユーザー3", "test3@example.com", "password3"))//
+            );
+    }
+
+    @TestFactory
+    List<DynamicTest> thirdTest() {
+        final Map<Long, UserEntity> map = getUsers();
+        final List<DynamicTest> tests = new ArrayList<>();
+
+        final UserEntity u1 = map.get(1L);
+        tests.add(dynamicTest("ユーザー1",//
+                () -> assertAll(
+                        () -> assumeTrue(u1 != null),
+                        () -> assertEquals(1L, u1.getId()),
+                        () -> assertEquals("ユーザー1", u1.getName()),
+                        () -> assertEquals("test1@example.com", u1.getEmail())
+                )));
+
+        final UserEntity u2 = map.get(2L);
+        tests.add(dynamicTest("ユーザー2",//
+                () -> assertAll(
+                        () -> assumeTrue(u2 != null),
+                        () -> assertEquals(2L, u2.getId()),
+                        () -> assertEquals("ユーザー2", u2.getName()),
+                        () -> assertEquals("test2@example.com", u2.getEmail())
+                )));
+
+        final UserEntity u3 = map.get(3L);
+        tests.add(dynamicTest("ユーザー3",//
+                () -> assertAll(
+                        () -> assumeTrue(u3 != null),
+                        () -> assertEquals(3L, u3.getId())
+                )));
+
+        return tests;
     }
 }
