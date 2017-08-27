@@ -7,7 +7,7 @@ buildscript {
         //noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
         classpath "org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}"
-        classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: '1.0.0-M4'
+        classpath group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: '1.0.0-RC3'
     }
 }
 
@@ -44,7 +44,7 @@ dependencies {
 
     runtime 'mysql:mysql-connector-java'
 
-    testCompile 'com.github.sbrannen:spring-test-junit5:1.0.0.M4'
+    testCompile 'com.github.sbrannen:spring-test-junit5:1.0.0.RC3'
 }
 
 subprojects {
