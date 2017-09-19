@@ -31,3 +31,7 @@ build/
 
 # jar files
 libs/
+classes/
+.apt_generated/
+org.eclipse.jdt.core.prefs
+org.eclipse.jdt.ui.prefs
