@@ -1,0 +1,3 @@
+include 'case1'
+
+rootProject.name = 'eclipse-collection-til'
