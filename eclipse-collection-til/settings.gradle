@@ -1,3 +1,11 @@
-include 'case1'
+pluginManagement {
+    repositories {
+        maven {
+            url 'http://repo1.maven.org/maven2/'
+        }
+        gradlePluginPortal()
+    }
+}
 
-rootProject.name = 'eclipse-collection-til'
+include("case1")
+rootProject.name = "eclipse-collection-til"

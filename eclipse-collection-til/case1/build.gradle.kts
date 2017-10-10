@@ -1,5 +1,8 @@
+val junitPlugin by project
+
 plugins {
     java
+    id("org.junit.platform.gradle.plugin")
 }
 
 buildscript {
@@ -14,12 +17,6 @@ buildscript {
         // というか、issue建てた
         // https://github.com/gradle/kotlin-dsl/issues/535
     }
-}
-
-val junitPlugin by project
-
-apply {
-    plugin("$junitPlugin")
 }
 
 tasks {
