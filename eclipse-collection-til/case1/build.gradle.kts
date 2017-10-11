@@ -1,22 +1,8 @@
-val junitPlugin by project
+import org.gradle.kotlin.dsl.getValue
 
 plugins {
     java
     id("org.junit.platform.gradle.plugin")
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        // buildscript スコープの中では val propName by project が解決できない(おそらくkotlin dslが読み込まれていない)
-        // これに近い
-        // https://github.com/gradle/kotlin-dsl/issues/472
-        classpath("${property("junitGradlePlugin")}:${property("junitGradleVersion")}")
-        // というか、issue建てた
-        // https://github.com/gradle/kotlin-dsl/issues/535
-    }
 }
 
 tasks {
