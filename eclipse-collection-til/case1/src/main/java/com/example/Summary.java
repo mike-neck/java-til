@@ -32,4 +32,32 @@ public class Summary {
         this.employee = employee;
         this.contracts = Collections.emptyList();
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Summary{");
+        sb.append("employee=").append(employee);
+        sb.append(", contracts=").append(contracts);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @SuppressWarnings("SimplifiableIfStatement")
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Summary)) return false;
+
+        final Summary summary = (Summary) o;
+
+        if (!employee.equals(summary.employee)) return false;
+        return contracts.equals(summary.contracts);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = employee.hashCode();
+        result = 31 * result + contracts.hashCode();
+        return result;
+    }
 }

@@ -25,10 +25,14 @@ val junitVersion by project
 val junitApi by project
 val junitEngine by project
 
+val guava by project
+val guavaVersion by project
+
 dependencies {
     implementation("$eclipseGroup:eclipse-collections-api:$eclipseCollectionsVersion")
     implementation("$eclipseGroup:eclipse-collections:$eclipseCollectionsVersion")
 
     testImplementation("$junitJupiter:$junitApi:$junitVersion")
     testImplementation("$junitJupiter:$junitEngine:$junitVersion")
+    testImplementation("$guava:$guavaVersion")
 }
