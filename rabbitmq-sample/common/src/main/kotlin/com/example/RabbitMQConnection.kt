@@ -18,41 +18,100 @@ package com.example
 import com.rabbitmq.client.*
 import java.io.Closeable
 
-typealias ChannelAction = (Channel) -> Unit
-typealias DeliveryHandler = (String?, Envelope?, AMQP.BasicProperties?, body: ByteArray?) -> Unit
+typealias ChannelAction = QueueName.(Channel) -> Unit
+typealias DeliveryHandler = Channel.(String?, Envelope?, AMQP.BasicProperties?, body: ByteArray?) -> Unit
 
 object RabbitMQConnection {
     val sample1: ConnectToMQ = object : ConnectToMQ {
         override val queueName: String
             get() = "sample1"
 
-        override fun connect(action: ChannelAction) =
-                connectionFactory().newConnection().use {connection ->  
-                    connection.createChannel().asCloseable.use { channel ->
-                        channel.queueDelete(queueName)
-                        channel.queueDeclare(queueName, false, false, false, emptyMap())
-                        action(channel)
-                    }
-                }
+        override fun connect(action: ChannelAction) = RabbitMQConnection.connect(this, action)
 
-        override fun receive(action: DeliveryHandler) {
-            connectionFactory().newConnection().use {connection: Connection ->  
-                connection.createChannel().asCloseable.use { channel ->
-                    channel.queueDeclare(queueName, false, false, false, emptyMap())
-                    println("waiting for message")
-                    channel.basicConsume(queueName, consumer(channel, action))
-                }
-            }
-        }
-
-        private fun connectionFactory(): ConnectionFactory {
-            val factory = ConnectionFactory()
-            factory.host = "localhost"
-            return factory
-        }
+        override fun receive(action: DeliveryHandler) =
+                RabbitMQConnection.receive(this, action).noQos().withoutAck().run()
     }
 
-    fun consumer(channel: Channel, handler: DeliveryHandler): Consumer = CustomConsumer(channel, handler)
+    private fun connectionFactory(): ConnectionFactory {
+        val factory = ConnectionFactory()
+        factory.host = "localhost"
+        return factory
+    }
+
+    private fun consumer(channel: Channel, handler: DeliveryHandler): Consumer = CustomConsumer(channel, handler)
+
+    private fun connect(queueName: QueueName, action: ChannelAction): Unit =
+            connectionFactory().newConnection().use { connection -> 
+                connection.createChannel().asCloseable.use { channel ->
+                    channel.queueDelete(queueName.queueName)
+                    channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
+                    action(queueName, channel)
+                }
+            }
+
+    private fun receive(queueName: QueueName, action: DeliveryHandler): BasicQos =
+            object : BasicQos {
+                override fun basicQos(qos: Int): AutoAck =
+                        object: AutoAck {
+                            override fun withoutAck(): Runnable = Runnable {
+                                connectionFactory().newConnection().use { connection ->
+                                    connection.createChannel().asCloseable.use { channel ->
+                                        channel.basicQos(qos)
+                                        channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
+                                        channel.basicConsume(queueName.queueName, consumer(channel, action))
+                                        Thread.sleep(35000L)
+                                        Unit
+                                    }
+                                }
+                            }
+
+                            override fun withAck(autoAck: Boolean): Runnable = Runnable {
+                                connectionFactory().newConnection().use { connection ->
+                                    connection.createChannel().asCloseable.use { channel ->
+                                        channel.basicQos(qos)
+                                        channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
+                                        channel.basicConsume(queueName.queueName, autoAck, consumer(channel, action))
+                                        Thread.sleep(35000L)
+                                        Unit
+                                    }
+                                }
+                            }
+                        }
+
+                override fun noQos(): AutoAck  =
+                        object: AutoAck {
+                            override fun withoutAck(): Runnable = Runnable {
+                                connectionFactory().newConnection().use { connection ->
+                                    connection.createChannel().asCloseable.use { channel ->
+                                        channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
+                                        channel.basicConsume(queueName.queueName, consumer(channel, action))
+                                        Thread.sleep(35000L)
+                                        Unit
+                                    }
+                                }
+                            }
+
+                            override fun withAck(autoAck: Boolean): Runnable = Runnable {
+                                connectionFactory().newConnection().use { connection ->
+                                    connection.createChannel().asCloseable.use { channel ->
+                                        channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
+                                        channel.basicConsume(queueName.queueName, autoAck, consumer(channel, action))
+                                        Thread.sleep(35000L)
+                                        Unit
+                                    }
+                                }
+                            }
+                        }
+            }
+
+    val sample2: ConnectToMQ = object : ConnectToMQ {
+        override fun receive(action: DeliveryHandler) =
+                RabbitMQConnection.receive(this, action).basicQos(10).notAutoAck().run()
+
+        override fun connect(action: ChannelAction) = RabbitMQConnection.connect(this, action)
+
+        override val queueName: String get() = "sample-2"
+    }
 }
 
 interface QueueName {
@@ -68,9 +127,21 @@ class RabbitMQChanel(private val channel: Channel): Channel by channel, Closeabl
 
 val Channel.asCloseable: RabbitMQChanel get() = RabbitMQChanel(this)
 
+interface AutoAck {
+    fun autoAck(): Runnable = withAck(true)
+    fun notAutoAck(): Runnable = withAck(false)
+    fun withoutAck(): Runnable
+    fun withAck(autoAck: Boolean): Runnable
+}
+
+interface BasicQos {
+    fun basicQos(qos: Int): AutoAck
+    fun noQos(): AutoAck
+}
+
 internal class CustomConsumer(channel: Channel, private val deliveryHandler: DeliveryHandler) : DefaultConsumer(channel) {
     override fun handleDelivery(
             consumerTag: String?, envelope: Envelope?, 
             properties: AMQP.BasicProperties?, body: ByteArray?) =
-            deliveryHandler.invoke(consumerTag, envelope, properties, body)
+            deliveryHandler(channel, consumerTag, envelope, properties, body)
 }

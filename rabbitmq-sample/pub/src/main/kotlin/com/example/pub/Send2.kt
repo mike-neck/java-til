@@ -16,15 +16,18 @@
 package com.example.pub
 
 import com.example.RabbitMQConnection
-
-val queueName = "sample1"
+import org.kohsuke.randname.RandomNameGenerator
+import java.util.*
 
 fun main(args: Array<String>) {
-    RabbitMQConnection.sample1.connect {channel ->  
-        (1..10).forEach {
-            val message = "message - $it".toByteArray(Charsets.UTF_8)
-            channel.basicPublish("", this.queueName, null, message)
-            println("pub - sent {$message}")
+    val random = Random()
+    val nameGenerator = RandomNameGenerator()
+    RabbitMQConnection.sample2.connect {channel ->  
+        repeat(10) {
+            val words = random.nextInt(6)
+            val message = (0..words).asSequence().map { nameGenerator.next()!! }.joinToString(",")
+            channel.basicPublish("", this.queueName, null, message.toByteArray(Charsets.UTF_8))
+            println("[$it] sent message '$message'")
             Thread.sleep(50L)
         }
     }
