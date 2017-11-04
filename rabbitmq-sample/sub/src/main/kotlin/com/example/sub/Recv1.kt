@@ -15,24 +15,19 @@
  */
 package com.example.sub
 
-import com.rabbitmq.client.*
-
-val queueName = "sample1"
+import com.example.RabbitMQConnection
+import java.util.concurrent.atomic.AtomicInteger
 
 fun main(args: Array<String>) {
-    val factory = ConnectionFactory()
-    factory.host = "localhost"
-    factory.newConnection().use { connection -> 
-        val channel = connection.createChannel()
-        channel.queueDeclare(queueName, false, false, false, null)
-        println("waiting for message.")
-        channel.basicConsume(queueName, Consumer(0, channel))
+    val integer: AtomicInteger = AtomicInteger(0)
+    RabbitMQConnection.sample1.receive { _, _, _, body ->
+        val message = if (body == null) {
+            "<null>"
+        } else {
+            String(body, Charsets.UTF_8)
+        }
+        println("[${integer.getAndIncrement()}] message comes {$message}")
+        Thread.sleep(20L)
     }
-}
-
-class Consumer(val index: Int, channel: Channel): DefaultConsumer(channel) {
-    override fun handleDelivery(consumerTag: String?, envelope: Envelope?, properties: AMQP.BasicProperties?, body: ByteArray?) =
-            (if (body == null) "<null>" else String(body, Charsets.UTF_8))
-                    .let { println("[$index] message comes {$it}") }
-                    .also { Thread.sleep(20L) }
+    Thread.sleep(5000L)
 }

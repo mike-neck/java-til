@@ -21,3 +21,4 @@ pluginManagement {
 rootProject.name = "rabbitmq-sample"
 include "pub"
 include "sub"
+include 'common'

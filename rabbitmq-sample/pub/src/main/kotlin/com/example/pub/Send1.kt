@@ -15,34 +15,17 @@
  */
 package com.example.pub
 
-import com.rabbitmq.client.Channel
-import com.rabbitmq.client.ConnectionFactory
+import com.example.RabbitMQConnection
 
 val queueName = "sample1"
 
 fun main(args: Array<String>) {
-    val factory = ConnectionFactory()
-    factory.host = "localhost"
-    factory.newConnection().use { connection ->
-        connection.createChannel().use { channel: Channel ->
-            channel.queueDeclare(queueName, false, false, false, emptyMap())
-
-            (1..10).forEach {
-                val message = "message - $it".toByteArray(Charsets.UTF_8)
-                channel.basicPublish("", queueName, null, message)
-                println("pub - sent {$message}")
-            }
+    RabbitMQConnection.sample1.connect {channel ->  
+        (1..10).forEach {
+            val message = "message - $it".toByteArray(Charsets.UTF_8)
+            channel.basicPublish("", queueName, null, message)
+            println("pub - sent {$message}")
+            Thread.sleep(50L)
         }
-    }
-}
-
-inline fun <C: AutoCloseable, R> C.use(f: (C) -> R): R = try {
-    f(this)
-} catch (e: Exception) {
-    throw e
-} finally {
-    try {
-        this.close()
-    } catch (e: Exception) {
     }
 }
