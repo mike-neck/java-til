@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
             val message = (0..size).joinToString(",") { generator.next() }
             println("[$it] published $message")
             channel.basicPublish(RabbitMQConnection.sample3.exchangeName, "", null, message.toByteArray(Charsets.UTF_8))
-            Thread.sleep(500L)
+            Thread.sleep(2000L)
         }
     }
 }

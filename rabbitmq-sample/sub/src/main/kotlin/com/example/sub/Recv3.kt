@@ -35,10 +35,9 @@ fun main(args: Array<String>) {
             println(it)
             Thread.sleep(500L)
         }
-        Thread.sleep(1000L)
         latch.countDown()
         println("[$count] done.")
     }.runBeforeClose { _, _ -> 
-        latch.await(50L, TimeUnit.SECONDS)
+        latch.await(60L, TimeUnit.SECONDS)
     }
 }
