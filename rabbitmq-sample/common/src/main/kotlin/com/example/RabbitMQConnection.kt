@@ -26,10 +26,11 @@ object RabbitMQConnection {
         override val queueName: String
             get() = "sample1"
 
-        override fun connect(action: ChannelAction) = RabbitMQConnection.connect(this, action)
+        override fun connect(action: ChannelAction) = RabbitMQConnection.connect(this, action).notDurable().run()
 
         override fun receive(action: DeliveryHandler): BeforeClose =
-                RabbitMQConnection.receive(this, action).noQos().withoutAck()
+                RabbitMQConnection.receive(this, action).notDurable()
+                        .noQos().withoutAck()
     }
 
     private fun connectionFactory(): ConnectionFactory {
@@ -40,79 +41,48 @@ object RabbitMQConnection {
 
     private fun consumer(channel: Channel, handler: DeliveryHandler): Consumer = CustomConsumer(channel, handler)
 
-    private fun connect(queueName: QueueName, action: ChannelAction): Unit =
-            connectionFactory().newConnection().use { connection -> 
+    private fun connect(queueName: QueueName, action: ChannelAction): ConnectionQueueDurableMode<Runnable> = object : ConnectionQueueDurableMode<Runnable> {
+        override fun withDurableMode(durable: Boolean): Runnable = Runnable {
+            connectionFactory().newConnection().use { connection ->
                 connection.createChannel().asCloseable.use { channel ->
                     channel.queueDelete(queueName.queueName)
-                    channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
+                    channel.queueDeclare(queueName.queueName, durable, false, false, emptyMap())
                     action(queueName, channel)
                 }
             }
+        }
+    }
 
-    private fun receive(queueName: QueueName, action: DeliveryHandler): BasicQos =
-            object : BasicQos {
-                override fun basicQos(qos: Int): AutoAck =
-                        object: AutoAck {
-                            override fun withoutAck(): BeforeClose = object: BeforeClose {
-                                override fun runBeforeClose(handler: (Connection, Channel) -> Unit) =
-                                        connectionFactory().newConnection().use { connection ->
-                                            connection.createChannel().asCloseable.use { channel ->
+    private fun receive(queueName: QueueName, action: DeliveryHandler): ConnectionQueueDurableMode<BasicQos> =
+            object : ConnectionQueueDurableMode<BasicQos> {
+                override fun withDurableMode(durable: Boolean): BasicQos = object : BasicQos {
+                    override fun withQos(qos: Int?): AutoAck = object : AutoAck {
+                        override fun withAck(autoAck: Boolean?): BeforeClose = object: BeforeClose {
+                            override fun runBeforeClose(handler: (Connection, Channel) -> Unit)  =
+                                    connectionFactory().newConnection().use { connection -> 
+                                        connection.createChannel().asCloseable.use { channel ->
+                                            if (qos != null) {
                                                 channel.basicQos(qos)
-                                                channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
-                                                channel.basicConsume(queueName.queueName, consumer(channel, action))
-                                                handler(connection, channel)
-                                                Unit
                                             }
-                                        }
-                            }
-
-                            override fun withAck(autoAck: Boolean): BeforeClose = object: BeforeClose {
-                                override fun runBeforeClose(handler: (Connection, Channel) -> Unit) =
-                                        connectionFactory().newConnection().use { connection ->
-                                            connection.createChannel().asCloseable.use { channel ->
-                                                channel.basicQos(qos)
-                                                channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
+                                            channel.queueDeclare(queueName.queueName, durable, false, false, emptyMap())
+                                            if (autoAck != null) {
                                                 channel.basicConsume(queueName.queueName, autoAck, consumer(channel, action))
-                                                handler(connection, channel)
-                                                Unit
-                                            }
-                                        }
-                            }
-                        }
-
-                override fun noQos(): AutoAck  =
-                        object: AutoAck {
-                            override fun withoutAck(): BeforeClose = object: BeforeClose {
-                                override fun runBeforeClose(handler: (Connection, Channel) -> Unit) =
-                                        connectionFactory().newConnection().use { connection ->
-                                            connection.createChannel().asCloseable.use { channel ->
-                                                channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
+                                            } else{
                                                 channel.basicConsume(queueName.queueName, consumer(channel, action))
-                                                handler(connection, channel)
-                                                Unit
                                             }
+                                            handler(connection, channel)
                                         }
-                            }
-
-                            override fun withAck(autoAck: Boolean): BeforeClose = object: BeforeClose {
-                                override fun runBeforeClose(handler: (Connection, Channel) -> Unit) =
-                                        connectionFactory().newConnection().use { connection ->
-                                            connection.createChannel().asCloseable.use { channel ->
-                                                channel.queueDeclare(queueName.queueName, false, false, false, emptyMap())
-                                                channel.basicConsume(queueName.queueName, autoAck, consumer(channel, action))
-                                                handler(connection, channel)
-                                                Unit
-                                            }
-                                        }
-                            }
+                                    }
                         }
+                    }
+                }
             }
 
     val sample2: ConnectToMQ = object : ConnectToMQ {
         override fun receive(action: DeliveryHandler): BeforeClose =
-                RabbitMQConnection.receive(this, action).basicQos(10).notAutoAck()
+                RabbitMQConnection.receive(this, action).durable().basicQos(10).notAutoAck()
 
-        override fun connect(action: ChannelAction) = RabbitMQConnection.connect(this, action)
+        override fun connect(action: ChannelAction) = RabbitMQConnection.connect(this, action).durable().run()
 
         override val queueName: String get() = "sample-2"
     }
@@ -138,13 +108,14 @@ interface BeforeClose {
 interface AutoAck {
     fun autoAck(): BeforeClose = withAck(true)
     fun notAutoAck(): BeforeClose = withAck(false)
-    fun withoutAck(): BeforeClose
-    fun withAck(autoAck: Boolean): BeforeClose
+    fun withoutAck(): BeforeClose = withAck(null)
+    fun withAck(autoAck: Boolean?): BeforeClose
 }
 
 interface BasicQos {
-    fun basicQos(qos: Int): AutoAck
-    fun noQos(): AutoAck
+    fun basicQos(qos: Int): AutoAck = withQos(qos)
+    fun noQos(): AutoAck = withQos(null)
+    fun withQos(qos: Int?): AutoAck
 }
 
 internal class CustomConsumer(channel: Channel, private val deliveryHandler: DeliveryHandler) : DefaultConsumer(channel) {
@@ -152,4 +123,10 @@ internal class CustomConsumer(channel: Channel, private val deliveryHandler: Del
             consumerTag: String?, envelope: Envelope?, 
             properties: AMQP.BasicProperties?, body: ByteArray?) =
             deliveryHandler(channel, consumerTag, envelope, properties, body)
+}
+
+interface ConnectionQueueDurableMode<out N> {
+    fun durable(): N = withDurableMode(true)
+    fun notDurable(): N = withDurableMode(false)
+    fun withDurableMode(durable: Boolean): N
 }

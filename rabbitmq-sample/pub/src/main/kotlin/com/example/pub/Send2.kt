@@ -16,6 +16,7 @@
 package com.example.pub
 
 import com.example.RabbitMQConnection
+import com.rabbitmq.client.MessageProperties
 import org.kohsuke.randname.RandomNameGenerator
 import java.util.*
 
@@ -26,7 +27,7 @@ fun main(args: Array<String>) {
         repeat(10) {
             val words = random.nextInt(6)
             val message = (0..words).asSequence().map { nameGenerator.next()!! }.joinToString(",")
-            channel.basicPublish("", this.queueName, null, message.toByteArray(Charsets.UTF_8))
+            channel.basicPublish("", this.queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.toByteArray(Charsets.UTF_8))
             println("[$it] sent message '$message'")
             Thread.sleep(50L)
         }
