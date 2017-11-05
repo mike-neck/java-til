@@ -16,10 +16,13 @@
 package com.example.sub
 
 import com.example.RabbitMQConnection
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 fun main(args: Array<String>) {
-    val integer: AtomicInteger = AtomicInteger(0)
+    val integer = AtomicInteger(0)
+    val latch = CountDownLatch(10)
     RabbitMQConnection.sample1.receive { _, _, _, body ->
         val message = if (body == null) {
             "<null>"
@@ -27,7 +30,7 @@ fun main(args: Array<String>) {
             String(body, Charsets.UTF_8)
         }
         println("[${integer.getAndIncrement()}] message comes {$message}")
+        latch.countDown()
         Thread.sleep(20L)
-    }
-    Thread.sleep(5000L)
+    }.runBeforeClose { _, _ -> latch.await(40000L, TimeUnit.MILLISECONDS) }
 }

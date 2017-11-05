@@ -41,8 +41,7 @@ fun main(args: Array<String>) {
         }
         println("[$count] done")
         latch.countDown()
-    }
-    latch.await(35000L, TimeUnit.MILLISECONDS)
+    }.runBeforeClose { _, _ -> latch.await(40000L, TimeUnit.MILLISECONDS) }
 }
 
 fun doTask(message: String) =
