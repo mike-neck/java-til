@@ -1,0 +1,17 @@
+pluginManagement {
+    repositories {
+        maven {
+            url("http://repo1.maven.org/maven2/")
+        }
+        gradlePluginPortal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "org.junit.platform.gradle.plugin") {
+                useModule("org.junit.platform:junit-platform-gradle-plugin:1.0.1")
+            }
+        }
+    }
+}
+
+rootProject.name = 'no-private'
