@@ -18,6 +18,7 @@ dependencies {
 
     implementation("org.jetbrains.xodus:xodus-openAPI:1.1.0")
     implementation("org.jetbrains.xodus:xodus-environment:1.1.0")
+    implementation("org.jetbrains.xodus:xodus-entity-store:1.1.0")
 
     testImplementation("org.jetbrains.spek:spek-api:1.1.5") {
         exclude(module = "kotlin-reflect")

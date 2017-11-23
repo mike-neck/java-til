@@ -19,10 +19,9 @@ import jetbrains.exodus.bindings.StringBinding
 import jetbrains.exodus.env.Cursor
 import jetbrains.exodus.env.Environments
 import jetbrains.exodus.env.StoreConfig
-import java.util.*
 
 fun main(args: Array<String>) {
-    Environments.newInstance(Constant["environment"]).use {env -> 
+    Environments.newInstance(Constant["environment"]).use { env -> 
         env.executeInTransaction { txn -> 
             val key = StringBinding.stringToEntry("hello")
             val value = StringBinding.stringToEntry("World.")
@@ -61,17 +60,4 @@ fun main(args: Array<String>) {
             }
         }
     }
-}
-
-object Constant {
-    val classLoader: ClassLoader get() = Constant::class.java.classLoader
-
-    val properties: Properties by lazy { 
-        (classLoader.getResourceAsStream("env.properties") ?: throw IllegalStateException("not found env.properties"))
-                .use { it.reader(Charsets.UTF_8).let { r -> Properties().apply { load(r) } } }
-    }
-
-    fun getProperty(key: String): String? = properties.getProperty(key)
-
-    operator fun get(key: String): String = "${getProperty(key)}"
 }
