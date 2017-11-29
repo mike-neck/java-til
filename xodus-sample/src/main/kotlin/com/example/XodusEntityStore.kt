@@ -20,6 +20,8 @@ import jetbrains.exodus.entitystore.Entity
 import jetbrains.exodus.entitystore.EntityId
 import jetbrains.exodus.entitystore.PersistentEntityStores
 import java.security.SecureRandom
+import java.time.LocalDateTime
+import java.util.*
 
 object XodusEntityStore {
 
@@ -27,10 +29,15 @@ object XodusEntityStore {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        val queue: Queue<EntityId> = LinkedList()
+
+        println("persist single entity")
         val persistentEntityStore = PersistentEntityStores.newInstance(Constant["entity"])
         persistentEntityStore.executeInTransaction { txn ->
             val userEntity = txn.newEntity("User")
             println("new User entity -> ${userEntity.type} - ${userEntity.id}")
+
+            queue.offer(userEntity.id)
 
             userEntity.setProperty("login", user.login)
             userEntity.setProperty("fullName", user.fullName)
@@ -42,10 +49,22 @@ object XodusEntityStore {
             txn.flush()
         }
 
+        println("get all single entity")
         persistentEntityStore.executeInReadonlyTransaction { txn ->
             val entityIterable = txn.getAll("User")
             entityIterable.forEach { 
                 println(User.from(it))
+                queue.offer(it.id)
+            }
+        }
+
+        println("querying all single entity")
+        persistentEntityStore.executeInReadonlyTransaction { txn ->
+            while (queue.isNotEmpty()) {
+                val entityId = queue.poll()
+                val entity = txn.getEntity(entityId)
+                println(entity.type)
+                println(User.from(entity))
             }
         }
     }
@@ -68,3 +87,35 @@ private data class User(val login: String, val fullName: String, val email: Stri
                 )
     }
 }
+
+interface PersistToEntity {
+    fun to(entity: Entity)
+}
+
+private data class Organization(val name: String, val createdAt: LocalDateTime) {
+    companion object {
+        fun from(entity: Entity): Pair<EntityId, Organization> =
+                entity.id to Organization(
+                        entity.getProperty("name") as String,
+                        entity.getProperty("createdAt") as LocalDateTime
+                )
+
+        fun persist(organization: Organization): PersistToEntity = object: PersistToEntity {
+            override fun to(entity: Entity) =
+                    entity.setProperty("name", organization.name) and
+                            entity.setProperty("createdAt", organization.createdAt).unit
+        }
+    }
+}
+
+private data class Employee(val name: String) {
+    companion object {
+        fun from(entity: Entity): Pair<EntityId, Employee> = entity.id to
+                Employee(entity.getProperty("name") as String)
+
+        
+    }
+}
+
+private infix fun <A: Any, B: Any> A.and(b: B): B = b
+private val <A: Any> A.unit: Unit get() = Unit
