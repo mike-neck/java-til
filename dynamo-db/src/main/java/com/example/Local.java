@@ -29,6 +29,7 @@ public class Local {
 
     public static void main(String[] args) throws Exception {
         System.out.println("running...");
+        System.out.println(System.getProperty("java.library.path"));
         new Local(args).start().join();
     }
 

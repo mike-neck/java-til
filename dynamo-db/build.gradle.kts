@@ -16,3 +16,9 @@ dependencies {
     compile("com.amazonaws:aws-java-sdk-dynamodb:1.11.255")
 }
 
+tasks {
+    "sqlite4"(Copy::class) {
+        from(configurations.getAt("compile").find { it.name == "libsqlite4java-osx-1.0.392.dylib" })
+        into("$buildDir/sqlite4")
+    }
+}
