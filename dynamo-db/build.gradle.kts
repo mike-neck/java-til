@@ -1,0 +1,18 @@
+import java.net.URI
+
+plugins {
+    id("java")
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = URI.create("https://s3-ap-northeast-1.amazonaws.com/dynamodb-local-tokyo/release")
+    }
+}
+
+dependencies {
+    compile("com.amazonaws:DynamoDBLocal:1.11.86")
+    compile("com.amazonaws:aws-java-sdk-dynamodb:1.11.255")
+}
+
