@@ -20,6 +20,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
 @ExtendWith({ ParameterSupplier.class })
 class FluxSupplierTest {
 
@@ -51,5 +54,19 @@ class FluxSupplierTest {
         StepVerifier.create(fluxSupplier.error())
                 .expectError(IllegalStateException.class)
                 .verify();
+    }
+
+    @Test
+    void interval(final FluxSupplier fluxSupplier) {
+        StepVerifier.create(fluxSupplier.interval(10L, ChronoUnit.MILLIS))
+                .expectNext(0L)
+                .thenAwait(Duration.ofMillis(10L))
+                .expectNext(1L)
+                .thenAwait(Duration.ofMillis(10L))
+                .expectNextCount(8L)
+                .verifyComplete();
+        StepVerifier.create(fluxSupplier.interval(100L, ChronoUnit.MILLIS))
+                .expectNextCount(10)
+                .verifyComplete();
     }
 }

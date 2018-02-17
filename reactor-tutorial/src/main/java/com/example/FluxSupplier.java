@@ -17,6 +17,8 @@ package com.example;
 
 import reactor.core.publisher.Flux;
 
+import java.time.temporal.TemporalUnit;
+
 public interface FluxSupplier {
 
     Flux<String> emptyFlux();
@@ -26,4 +28,6 @@ public interface FluxSupplier {
     Flux<String> fromIterable(Iterable<String> iterable);
 
     Flux<String> error();
+
+    Flux<Long> interval(long duration, TemporalUnit unit);
 }

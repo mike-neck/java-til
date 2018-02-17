@@ -17,6 +17,9 @@ package com.example;
 
 import reactor.core.publisher.Flux;
 
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
+
 public class FluxSupplierImpl implements FluxSupplier {
 
     @Override
@@ -37,5 +40,10 @@ public class FluxSupplierImpl implements FluxSupplier {
     @Override
     public Flux<String> error() {
         return Flux.error(new IllegalStateException(), true);
+    }
+
+    @Override
+    public Flux<Long> interval(final long duration, final TemporalUnit unit) {
+        return Flux.interval(Duration.of(duration, unit)).take(10);
     }
 }
