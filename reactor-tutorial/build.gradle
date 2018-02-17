@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+    id "org.mikeneck.junit.starter.normal" version "5.0.2"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+    compile group: 'io.projectreactor', name: 'reactor-core', version: '3.1.4.RELEASE'
+    compile group: 'org.eclipse.collections', name: 'eclipse-collections', version: '9.1.0'
+    testCompile group: 'io.projectreactor', name: 'reactor-test', version: '3.1.4.RELEASE'
+    testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
+}
