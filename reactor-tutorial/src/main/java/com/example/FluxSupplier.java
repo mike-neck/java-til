@@ -24,4 +24,6 @@ public interface FluxSupplier {
     Flux<String> fromValues(String... values);
 
     Flux<String> fromIterable(Iterable<String> iterable);
+
+    Flux<String> error();
 }

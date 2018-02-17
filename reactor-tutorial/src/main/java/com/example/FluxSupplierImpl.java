@@ -33,4 +33,9 @@ public class FluxSupplierImpl implements FluxSupplier {
     public Flux<String> fromIterable(final Iterable<String> iterable) {
         return Flux.fromIterable(iterable);
     }
+
+    @Override
+    public Flux<String> error() {
+        return Flux.error(new IllegalStateException(), true);
+    }
 }

@@ -45,4 +45,11 @@ class FluxSupplierTest {
                 .expectNext("foo", "bar", "baz")
                 .verifyComplete();
     }
+
+    @Test
+    void error(final FluxSupplier fluxSupplier) {
+        StepVerifier.create(fluxSupplier.error())
+                .expectError(IllegalStateException.class)
+                .verify();
+    }
 }
