@@ -15,6 +15,7 @@
  */
 package com.example;
 
+import org.eclipse.collections.impl.factory.Iterables;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.test.StepVerifier;
@@ -35,6 +36,13 @@ class FluxSupplierTest {
                 .expectNext("foo")
                 .expectNext("bar")
                 .expectNext("baz")
+                .verifyComplete();
+    }
+
+    @Test
+    void fromIterable(final FluxSupplier fluxSupplier) {
+        StepVerifier.create(fluxSupplier.fromIterable(Iterables.iList("foo", "bar", "baz")))
+                .expectNext("foo", "bar", "baz")
                 .verifyComplete();
     }
 }

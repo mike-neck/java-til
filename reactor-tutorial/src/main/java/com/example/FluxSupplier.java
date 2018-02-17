@@ -22,4 +22,6 @@ public interface FluxSupplier {
     Flux<String> emptyFlux();
 
     Flux<String> fromValues(String... values);
+
+    Flux<String> fromIterable(Iterable<String> iterable);
 }

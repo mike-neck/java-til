@@ -19,8 +19,6 @@ import reactor.core.publisher.Flux;
 
 public class FluxSupplierImpl implements FluxSupplier {
 
-    
-
     @Override
     public Flux<String> emptyFlux() {
         return Flux.empty();
@@ -29,5 +27,10 @@ public class FluxSupplierImpl implements FluxSupplier {
     @Override
     public Flux<String> fromValues(final String... values) {
         return Flux.just(values);
+    }
+
+    @Override
+    public Flux<String> fromIterable(final Iterable<String> iterable) {
+        return Flux.fromIterable(iterable);
     }
 }
