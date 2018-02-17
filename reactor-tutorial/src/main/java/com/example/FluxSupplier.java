@@ -20,4 +20,6 @@ import reactor.core.publisher.Flux;
 public interface FluxSupplier {
 
     Flux<String> emptyFlux();
+
+    Flux<String> fromValues(String... values);
 }

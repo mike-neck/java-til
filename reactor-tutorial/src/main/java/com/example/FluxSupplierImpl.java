@@ -25,4 +25,9 @@ public class FluxSupplierImpl implements FluxSupplier {
     public Flux<String> emptyFlux() {
         return Flux.empty();
     }
+
+    @Override
+    public Flux<String> fromValues(final String... values) {
+        return Flux.just(values);
+    }
 }

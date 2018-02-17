@@ -28,4 +28,13 @@ class FluxSupplierTest {
                 .expectComplete()
                 .verify();
     }
+
+    @Test
+    void fromValues(final FluxSupplier fluxSupplier) {
+        StepVerifier.create(fluxSupplier.fromValues("foo", "bar", "baz"))
+                .expectNext("foo")
+                .expectNext("bar")
+                .expectNext("baz")
+                .verifyComplete();
+    }
 }
