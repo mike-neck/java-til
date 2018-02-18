@@ -28,4 +28,9 @@ public class MonoSupplierImpl implements MonoSupplier {
     public Mono<String> never() {
         return Mono.never();
     }
+
+    @Override
+    public Mono<String> just(final String value) {
+        return Mono.just(value);
+    }
 }

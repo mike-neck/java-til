@@ -22,4 +22,6 @@ public interface MonoSupplier {
     Mono<String> empty();
 
     Mono<String> never();
+
+    Mono<String> just(String value);
 }

@@ -35,4 +35,11 @@ class MonoSupplierTest {
         StepVerifier.create(monoSupplier.never())
                 .expectNoEvent(Duration.ofSeconds(1L));
     }
+
+    @Test
+    void justMono(final MonoSupplier monoSupplier) {
+        StepVerifier.create(monoSupplier.just("foo"))
+                .expectNext("foo")
+                .verifyComplete();
+    }
 }
