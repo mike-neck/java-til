@@ -21,6 +21,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 @ExtendWith({ ParameterSupplier.class })
 class StepVerifierRunnerTest {
@@ -30,5 +31,18 @@ class StepVerifierRunnerTest {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         stepVerifierRunner.verifyFooBar(Flux.just("foo", "bar").doOnComplete(countDownLatch::countDown));
         countDownLatch.await(200L, TimeUnit.MILLISECONDS);
+    }
+
+    @Test
+    void fooBarThenExceptionTesting(final StepVerifierRunner stepVerifierRunner) throws InterruptedException {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final Stream<String> stream = Stream.concat(Stream.of("foo", "bar"), Stream.generate(() -> {
+            countDownLatch.countDown();
+            throw new RuntimeException("foo-bar-exception");
+        }));
+        final Flux<String> flux = Flux.fromStream(stream);
+        stepVerifierRunner.verifyFooBarThenException(flux);
+        countDownLatch.await(200L, TimeUnit.MILLISECONDS);
+        System.out.println(countDownLatch);
     }
 }

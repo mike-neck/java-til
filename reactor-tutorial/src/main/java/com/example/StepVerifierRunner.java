@@ -16,8 +16,11 @@
 package com.example;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface StepVerifierRunner {
 
     void verifyFooBar(Flux<String> flux);
+
+    void verifyFooBarThenException(Flux<String> flux);
 }

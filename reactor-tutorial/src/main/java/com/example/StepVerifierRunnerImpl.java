@@ -27,4 +27,9 @@ public class StepVerifierRunnerImpl implements StepVerifierRunner {
                 .expectNext("bar")
                 .verifyComplete();
     }
+
+    @Override
+    public void verifyFooBarThenException(final Flux<String> flux) {
+        
+    }
 }
