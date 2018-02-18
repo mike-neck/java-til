@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
+
 @ExtendWith({ ParameterSupplier.class })
 class MonoSupplierTest {
 
@@ -26,5 +28,11 @@ class MonoSupplierTest {
     void emptyMono(final MonoSupplier monoSupplier) {
         StepVerifier.create(monoSupplier.empty())
                 .verifyComplete();
+    }
+
+    @Test
+    void neverEmit(final MonoSupplier monoSupplier) {
+        StepVerifier.create(monoSupplier.never())
+                .expectNoEvent(Duration.ofSeconds(1L));
     }
 }

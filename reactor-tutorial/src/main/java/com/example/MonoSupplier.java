@@ -20,4 +20,6 @@ import reactor.core.publisher.Mono;
 public interface MonoSupplier {
 
     Mono<String> empty();
+
+    Mono<String> never();
 }

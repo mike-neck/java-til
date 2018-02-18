@@ -23,4 +23,9 @@ public class MonoSupplierImpl implements MonoSupplier {
     public Mono<String> empty() {
         return Mono.empty();
     }
+
+    @Override
+    public Mono<String> never() {
+        return Mono.never();
+    }
 }
