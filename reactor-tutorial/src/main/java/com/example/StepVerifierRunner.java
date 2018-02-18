@@ -15,14 +15,9 @@
  */
 package com.example;
 
-import com.google.inject.AbstractModule;
+import reactor.core.publisher.Flux;
 
-public class Module extends AbstractModule {
+public interface StepVerifierRunner {
 
-    @Override
-    protected void configure() {
-        bind(FluxSupplier.class).to(FluxSupplierImpl.class);
-        bind(MonoSupplier.class).to(MonoSupplierImpl.class);
-        bind(StepVerifierRunner.class).to(StepVerifierRunnerImpl.class);
-    }
+    void verifyFooBar(Flux<String> flux);
 }

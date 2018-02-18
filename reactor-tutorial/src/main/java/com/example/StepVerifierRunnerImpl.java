@@ -15,14 +15,16 @@
  */
 package com.example;
 
-import com.google.inject.AbstractModule;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
-public class Module extends AbstractModule {
+public class StepVerifierRunnerImpl implements StepVerifierRunner {
 
     @Override
-    protected void configure() {
-        bind(FluxSupplier.class).to(FluxSupplierImpl.class);
-        bind(MonoSupplier.class).to(MonoSupplierImpl.class);
-        bind(StepVerifierRunner.class).to(StepVerifierRunnerImpl.class);
+    public void verifyFooBar(final Flux<String> flux) {
+        StepVerifier.create(flux)
+                .expectNext("foo")
+                .expectNext("bar")
+                .verifyComplete();
     }
 }
