@@ -15,13 +15,9 @@
  */
 package com.example;
 
-import com.google.inject.AbstractModule;
+import reactor.core.publisher.Mono;
 
-public class Module extends AbstractModule {
+public interface MonoSupplier {
 
-    @Override
-    protected void configure() {
-        bind(FluxSupplier.class).to(FluxSupplierImpl.class);
-        bind(MonoSupplier.class).to(MonoSupplierImpl.class);
-    }
+    Mono<String> empty();
 }

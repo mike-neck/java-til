@@ -15,13 +15,16 @@
  */
 package com.example;
 
-import com.google.inject.AbstractModule;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import reactor.test.StepVerifier;
 
-public class Module extends AbstractModule {
+@ExtendWith({ ParameterSupplier.class })
+class MonoSupplierTest {
 
-    @Override
-    protected void configure() {
-        bind(FluxSupplier.class).to(FluxSupplierImpl.class);
-        bind(MonoSupplier.class).to(MonoSupplierImpl.class);
+    @Test
+    void emptyMono(final MonoSupplier monoSupplier) {
+        StepVerifier.create(monoSupplier.empty())
+                .verifyComplete();
     }
 }
