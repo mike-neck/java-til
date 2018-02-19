@@ -15,34 +15,42 @@
  */
 package com.example;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertTimeout;
+
 @ExtendWith({ ParameterSupplier.class })
 class StepVerifierRunnerTest {
 
-    @Test
-    void fooBarTesting(final StepVerifierRunner stepVerifierRunner) throws InterruptedException {
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
-        stepVerifierRunner.verifyFooBar(Flux.just("foo", "bar").doOnComplete(countDownLatch::countDown));
-        countDownLatch.await(200L, TimeUnit.MILLISECONDS);
+    private CountDownLatch countDownLatch;
+
+    @BeforeEach
+    void setupLatch() {
+        countDownLatch = new CountDownLatch(1);
     }
 
     @Test
-    void fooBarThenExceptionTesting(final StepVerifierRunner stepVerifierRunner) throws InterruptedException {
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
+    void fooBarTesting(final StepVerifierRunner stepVerifierRunner) {
+        stepVerifierRunner.verifyFooBar(Flux.just("foo", "bar").doOnComplete(countDownLatch::countDown));
+        assertTimeout(Duration.ofMillis(500L), () -> countDownLatch.await(2000L, TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    void fooBarThenExceptionTesting(final StepVerifierRunner stepVerifierRunner) {
         final Stream<String> stream = Stream.concat(Stream.of("foo", "bar"), Stream.generate(() -> {
             countDownLatch.countDown();
             throw new RuntimeException("foo-bar-exception");
         }));
         final Flux<String> flux = Flux.fromStream(stream);
         stepVerifierRunner.verifyFooBarThenException(flux);
-        countDownLatch.await(200L, TimeUnit.MILLISECONDS);
-        System.out.println(countDownLatch);
+        assertTimeout(Duration.ofMillis(500L), () -> countDownLatch.await(2000L, TimeUnit.MILLISECONDS));
     }
 }
