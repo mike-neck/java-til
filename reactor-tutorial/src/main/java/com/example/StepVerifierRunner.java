@@ -23,4 +23,11 @@ public interface StepVerifierRunner {
     void verifyFooBar(Flux<String> flux);
 
     void verifyFooBarThenException(Flux<String> flux);
+
+    void verifyUsername(Flux<User> flux);
+
+    @FunctionalInterface
+    interface User {
+        String getUsername();
+    }
 }

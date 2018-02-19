@@ -35,4 +35,9 @@ public class StepVerifierRunnerImpl implements StepVerifierRunner {
                 .expectError(RuntimeException.class)
                 .verify();
     }
+
+    @Override
+    public void verifyUsername(final Flux<User> flux) {
+        
+    }
 }
