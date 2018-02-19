@@ -18,6 +18,8 @@ package com.example;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class StepVerifierRunnerImpl implements StepVerifierRunner {
 
     @Override
@@ -38,6 +40,9 @@ public class StepVerifierRunnerImpl implements StepVerifierRunner {
 
     @Override
     public void verifyUsername(final Flux<User> flux) {
-        
+        StepVerifier.create(flux)
+                .assertNext(user -> assertThat(user.getUsername()).isEqualTo("scott"))
+                .assertNext(user -> assertThat(user.getUsername()).isEqualTo("tiger"))
+                .verifyComplete();
     }
 }
