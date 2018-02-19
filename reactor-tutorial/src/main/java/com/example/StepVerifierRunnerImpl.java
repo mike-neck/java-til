@@ -30,6 +30,9 @@ public class StepVerifierRunnerImpl implements StepVerifierRunner {
 
     @Override
     public void verifyFooBarThenException(final Flux<String> flux) {
-        
+        StepVerifier.create(flux)
+                .expectNext("foo", "bar")
+                .expectError(RuntimeException.class)
+                .verify();
     }
 }

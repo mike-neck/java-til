@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
-@ExtendWith({ ParameterSupplier.class })
+@ExtendWith({ParameterSupplier.class})
 class StepVerifierRunnerTest {
 
     private CountDownLatch countDownLatch;
