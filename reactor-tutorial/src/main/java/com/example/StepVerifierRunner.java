@@ -26,6 +26,8 @@ public interface StepVerifierRunner {
 
     void verifyUsername(Flux<User> flux);
 
+    void verify10Items(Flux<Integer> flux);
+
     @FunctionalInterface
     interface User {
         String getUsername();

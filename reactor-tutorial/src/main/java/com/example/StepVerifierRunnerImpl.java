@@ -45,4 +45,9 @@ public class StepVerifierRunnerImpl implements StepVerifierRunner {
                 .assertNext(user -> assertThat(user.getUsername()).isEqualTo("tiger"))
                 .verifyComplete();
     }
+
+    @Override
+    public void verify10Items(final Flux<Integer> flux) {
+        
+    }
 }

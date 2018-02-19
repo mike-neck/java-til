@@ -23,6 +23,7 @@ import reactor.core.publisher.Flux;
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTimeout;
@@ -58,6 +59,13 @@ class StepVerifierRunnerTest {
     void assertionForUsersName(final StepVerifierRunner stepVerifierRunner) {
         final Flux<StepVerifierRunner.User> flux = Flux.<StepVerifierRunner.User>just(() -> "scott", () -> "tiger").doOnComplete(countDownLatch::countDown);
         stepVerifierRunner.verifyUsername(flux);
+        assertTimeout(Duration.ofMillis(500L), () -> countDownLatch.await(2000L, TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    void verify10Items(final StepVerifierRunner stepVerifierRunner) {
+        final Stream<Integer> stream = IntStream.iterate(0, i -> i + 1).limit(10L).boxed();
+        stepVerifierRunner.verify10Items(Flux.fromStream(() -> stream).doOnComplete(countDownLatch::countDown));
         assertTimeout(Duration.ofMillis(500L), () -> countDownLatch.await(2000L, TimeUnit.MILLISECONDS));
     }
 }
