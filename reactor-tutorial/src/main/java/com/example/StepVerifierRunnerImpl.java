@@ -48,6 +48,8 @@ public class StepVerifierRunnerImpl implements StepVerifierRunner {
 
     @Override
     public void verify10Items(final Flux<Integer> flux) {
-        
+        StepVerifier.create(flux)
+                .expectNextCount(10L)
+                .verifyComplete();
     }
 }
