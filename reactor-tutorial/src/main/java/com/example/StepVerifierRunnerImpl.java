@@ -52,4 +52,9 @@ public class StepVerifierRunnerImpl implements StepVerifierRunner {
                 .expectNextCount(10L)
                 .verifyComplete();
     }
+
+    @Override
+    public void verifyTooLongFlux(final Flux<Long> flux) {
+        
+    }
 }

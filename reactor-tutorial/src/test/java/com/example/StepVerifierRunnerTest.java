@@ -15,21 +15,29 @@
  */
 package com.example;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 import java.time.Duration;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith({ParameterSupplier.class})
 class StepVerifierRunnerTest {
+
+    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+
+    @AfterAll
+    static void stop() {
+        EXECUTOR.shutdown();
+    }
 
     private CountDownLatch countDownLatch;
 
@@ -67,5 +75,14 @@ class StepVerifierRunnerTest {
         final Stream<Integer> stream = IntStream.iterate(0, i -> i + 1).limit(10L).boxed();
         stepVerifierRunner.verify10Items(Flux.fromStream(() -> stream).doOnComplete(countDownLatch::countDown));
         assertTimeout(Duration.ofMillis(500L), () -> countDownLatch.await(2000L, TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    void verifyTooLongFlux(final StepVerifierRunner stepVerifierRunner) throws InterruptedException {
+        final Flux<Long> flux = Flux.interval(Duration.ofSeconds(1L), Duration.ofSeconds(1L)).take(3600L).doOnComplete(countDownLatch::countDown);
+        final Future<?> future = EXECUTOR.submit(() -> stepVerifierRunner.verifyTooLongFlux(flux));
+        Thread.sleep(5000L);
+        future.cancel(true);
+        assertEquals(0, countDownLatch.getCount());
     }
 }
