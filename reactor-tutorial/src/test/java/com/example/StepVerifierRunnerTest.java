@@ -20,14 +20,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
 
 import java.time.Duration;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
 
 @ExtendWith({ParameterSupplier.class})
 class StepVerifierRunnerTest {
@@ -79,9 +80,11 @@ class StepVerifierRunnerTest {
 
     @Test
     void verifyTooLongFlux(final StepVerifierRunner stepVerifierRunner) throws InterruptedException {
-        final Flux<Long> flux = Flux.interval(Duration.ofSeconds(1L), Duration.ofSeconds(1L)).take(3600L).doOnComplete(countDownLatch::countDown);
+        final Supplier<Flux<Long>> flux = () -> Flux.interval(Duration.ofSeconds(1L), Duration.ofSeconds(1L)).take(3600L)
+                .log("too-long-test")
+                .doOnComplete(countDownLatch::countDown);
         final Future<?> future = EXECUTOR.submit(() -> stepVerifierRunner.verifyTooLongFlux(flux));
-        Thread.sleep(5000L);
+        Thread.sleep(2_000L);
         future.cancel(true);
         assertEquals(0, countDownLatch.getCount());
     }

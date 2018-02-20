@@ -18,6 +18,9 @@ package com.example;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
+import java.util.function.Supplier;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepVerifierRunnerImpl implements StepVerifierRunner {
@@ -54,7 +57,16 @@ public class StepVerifierRunnerImpl implements StepVerifierRunner {
     }
 
     @Override
-    public void verifyTooLongFlux(final Flux<Long> flux) {
-        
+    public void verifyTooLongFlux(final Supplier<Flux<Long>> flux) {
+        StepVerifier.withVirtualTime(flux)
+                .expectSubscription()
+                .expectNoEvent(Duration.ofSeconds(1L))
+                .expectNext(0L)
+                .thenAwait(Duration.ofSeconds(1L))
+                .expectNext(1L)
+                .thenAwait(Duration.ofSeconds(3600L - 2L))
+                .expectNextCount(3600L - 3)
+                .expectNext(3599L)
+                .verifyComplete();
     }
 }

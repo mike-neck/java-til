@@ -16,7 +16,8 @@
 package com.example;
 
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.function.Supplier;
 
 public interface StepVerifierRunner {
 
@@ -28,7 +29,7 @@ public interface StepVerifierRunner {
 
     void verify10Items(Flux<Integer> flux);
 
-    void verifyTooLongFlux(Flux<Long> flux);
+    void verifyTooLongFlux(Supplier<Flux<Long>> flux);
 
     @FunctionalInterface
     interface User {
