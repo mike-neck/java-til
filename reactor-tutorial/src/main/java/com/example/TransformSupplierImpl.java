@@ -27,6 +27,6 @@ public class TransformSupplierImpl implements TransformSupplier {
 
     @Override
     public Flux<Name> mappingFlux(final Flux<User> flux) {
-        return null;
+        return flux.map(User::capitalizedName);
     }
 }
