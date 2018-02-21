@@ -28,7 +28,7 @@ public interface Name {
         final String capitalized = value.codePoints()
                 .collect(CharLists.mutable::empty, (list, value1) -> list.add((char) value1), MutableCharList::addAll)
                 .collectWithIndex((CharIntToObjectFunction<Character>) (ch, index) -> index == 0 ? Character.toUpperCase(ch) : ch)
-                .makeString();
+                .makeString("");
         return () -> capitalized;
     }
 }

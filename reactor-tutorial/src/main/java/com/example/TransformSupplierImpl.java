@@ -18,8 +18,9 @@ package com.example;
 import reactor.core.publisher.Mono;
 
 public class TransformSupplierImpl implements TransformSupplier {
+
     @Override
     public Mono<Name> mappingMono(final Mono<User> mono) {
-        return null;
+        return mono.map(User::capitalizedName);
     }
 }
