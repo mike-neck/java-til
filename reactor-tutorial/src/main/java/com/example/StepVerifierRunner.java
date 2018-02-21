@@ -31,8 +31,4 @@ public interface StepVerifierRunner {
 
     void verifyTooLongFlux(Supplier<Flux<Long>> flux);
 
-    @FunctionalInterface
-    interface User {
-        String getUsername();
-    }
 }

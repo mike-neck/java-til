@@ -66,7 +66,7 @@ class StepVerifierRunnerTest {
 
     @Test
     void assertionForUsersName(final StepVerifierRunner stepVerifierRunner) {
-        final Flux<StepVerifierRunner.User> flux = Flux.<StepVerifierRunner.User>just(() -> "scott", () -> "tiger").doOnComplete(countDownLatch::countDown);
+        final Flux<User> flux = Flux.<User>just(() -> () -> "scott", () -> () -> "tiger").doOnComplete(countDownLatch::countDown);
         stepVerifierRunner.verifyUsername(flux);
         assertTimeout(Duration.ofMillis(500L), () -> countDownLatch.await(2000L, TimeUnit.MILLISECONDS));
     }

@@ -15,15 +15,9 @@
  */
 package com.example;
 
-import com.google.inject.AbstractModule;
+import reactor.core.publisher.Mono;
 
-public class Module extends AbstractModule {
+public interface TransformSupplier {
 
-    @Override
-    protected void configure() {
-        bind(FluxSupplier.class).to(FluxSupplierImpl.class);
-        bind(MonoSupplier.class).to(MonoSupplierImpl.class);
-        bind(StepVerifierRunner.class).to(StepVerifierRunnerImpl.class);
-        bind(TransformSupplier.class).to(TransformSupplierImpl.class);
-    }
+    Mono<Name> mappingMono(Mono<User> mono);
 }

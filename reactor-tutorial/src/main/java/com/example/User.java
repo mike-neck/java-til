@@ -15,15 +15,12 @@
  */
 package com.example;
 
-import com.google.inject.AbstractModule;
+@FunctionalInterface
+public interface User {
+    Name getUsername();
 
-public class Module extends AbstractModule {
-
-    @Override
-    protected void configure() {
-        bind(FluxSupplier.class).to(FluxSupplierImpl.class);
-        bind(MonoSupplier.class).to(MonoSupplierImpl.class);
-        bind(StepVerifierRunner.class).to(StepVerifierRunnerImpl.class);
-        bind(TransformSupplier.class).to(TransformSupplierImpl.class);
+    default Name capitalizedName() {
+        final Name username = getUsername();
+        return username.capitalize();
     }
 }

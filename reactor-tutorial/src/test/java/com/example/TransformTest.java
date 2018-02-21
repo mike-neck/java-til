@@ -15,15 +15,21 @@
  */
 package com.example;
 
-import com.google.inject.AbstractModule;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-public class Module extends AbstractModule {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    @Override
-    protected void configure() {
-        bind(FluxSupplier.class).to(FluxSupplierImpl.class);
-        bind(MonoSupplier.class).to(MonoSupplierImpl.class);
-        bind(StepVerifierRunner.class).to(StepVerifierRunnerImpl.class);
-        bind(TransformSupplier.class).to(TransformSupplierImpl.class);
+@ExtendWith({ ParameterSupplier.class })
+class TransformTest {
+
+    @Test
+    void mappingMono(final TransformSupplier transformSupplier) {
+        final Mono<User> mono = Mono.just(() -> () -> "miguel");
+        StepVerifier.create(transformSupplier.mappingMono(mono))
+                .assertNext(name -> assertThat(name.asString()).isEqualTo("Miguel"))
+                .verifyComplete();
     }
 }
