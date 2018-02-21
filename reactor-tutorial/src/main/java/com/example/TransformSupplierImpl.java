@@ -15,6 +15,7 @@
  */
 package com.example;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public class TransformSupplierImpl implements TransformSupplier {
@@ -22,5 +23,10 @@ public class TransformSupplierImpl implements TransformSupplier {
     @Override
     public Mono<Name> mappingMono(final Mono<User> mono) {
         return mono.map(User::capitalizedName);
+    }
+
+    @Override
+    public Flux<Name> mappingFlux(final Flux<User> flux) {
+        return null;
     }
 }

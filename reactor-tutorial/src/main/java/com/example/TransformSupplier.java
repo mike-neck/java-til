@@ -15,9 +15,12 @@
  */
 package com.example;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface TransformSupplier {
 
     Mono<Name> mappingMono(Mono<User> mono);
+
+    Flux<Name> mappingFlux(Flux<User> flux);
 }

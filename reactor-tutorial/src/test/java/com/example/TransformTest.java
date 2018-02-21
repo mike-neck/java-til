@@ -17,8 +17,11 @@ package com.example;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,6 +33,17 @@ class TransformTest {
         final Mono<User> mono = Mono.just(() -> () -> "miguel");
         StepVerifier.create(transformSupplier.mappingMono(mono))
                 .assertNext(name -> assertThat(name.asString()).isEqualTo("Miguel"))
+                .verifyComplete();
+    }
+
+    @Test
+    void mappingFlux(final TransformSupplier transformSupplier) {
+        final Stream<User> stream = Stream.of("user", "1st", "impossible").map(name -> () -> () -> name);
+        final Flux<User> flux = Flux.fromStream(stream);
+        StepVerifier.create(transformSupplier.mappingFlux(flux))
+                .assertNext(name -> assertThat(name.asString()).isEqualTo("User"))
+                .assertNext(name -> assertThat(name.asString()).isEqualTo("1st"))
+                .assertNext(name -> assertThat(name.asString()).isEqualTo("Impossible"))
                 .verifyComplete();
     }
 }
