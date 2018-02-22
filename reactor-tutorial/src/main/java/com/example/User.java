@@ -15,12 +15,23 @@
  */
 package com.example;
 
+import reactor.core.publisher.Mono;
+
+import java.time.Duration;
+
 @FunctionalInterface
 public interface User {
+
+    long DELAY = 10L;
+
     Name getUsername();
 
     default Name capitalizedName() {
         final Name username = getUsername();
         return username.capitalize();
+    }
+
+    default Mono<Name> asyncCapitalizedName() {
+        return Mono.delay(Duration.ofSeconds(DELAY)).then(Mono.fromSupplier(this::capitalizedName));
     }
 }

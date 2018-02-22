@@ -21,6 +21,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,9 +40,24 @@ class TransformTest {
 
     @Test
     void mappingFlux(final TransformSupplier transformSupplier) {
-        final Stream<User> stream = Stream.of("user", "1st", "impossible").map(name -> () -> () -> name);
-        final Flux<User> flux = Flux.fromStream(stream);
+        final Flux<User> flux = createFlux();
         StepVerifier.create(transformSupplier.mappingFlux(flux))
+                .assertNext(name -> assertThat(name.asString()).isEqualTo("User"))
+                .assertNext(name -> assertThat(name.asString()).isEqualTo("1st"))
+                .assertNext(name -> assertThat(name.asString()).isEqualTo("Impossible"))
+                .verifyComplete();
+    }
+
+    private static Flux<User> createFlux() {
+        final Stream<User> stream = Stream.of("user", "1st", "impossible").map(name -> () -> () -> name);
+        return Flux.fromStream(stream);
+    }
+
+    @Test
+    void flatMappingFlux(final TransformSupplier transformSupplier) {
+        final Flux<User> flux = createFlux();
+        StepVerifier.withVirtualTime(() -> transformSupplier.flatMappingFlux(flux))
+                .thenAwait(Duration.ofSeconds(User.DELAY * 4))
                 .assertNext(name -> assertThat(name.asString()).isEqualTo("User"))
                 .assertNext(name -> assertThat(name.asString()).isEqualTo("1st"))
                 .assertNext(name -> assertThat(name.asString()).isEqualTo("Impossible"))

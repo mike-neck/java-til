@@ -23,4 +23,6 @@ public interface TransformSupplier {
     Mono<Name> mappingMono(Mono<User> mono);
 
     Flux<Name> mappingFlux(Flux<User> flux);
+
+    Flux<Name> flatMappingFlux(Flux<User> flux);
 }
