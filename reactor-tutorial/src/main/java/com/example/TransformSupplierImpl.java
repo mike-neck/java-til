@@ -32,6 +32,6 @@ public class TransformSupplierImpl implements TransformSupplier {
 
     @Override
     public Flux<Name> flatMappingFlux(final Flux<User> flux) {
-        return null;
+        return flux.flatMap(User::asyncCapitalizedName);
     }
 }
