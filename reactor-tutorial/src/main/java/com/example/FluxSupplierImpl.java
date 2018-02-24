@@ -15,11 +15,13 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
 import java.time.temporal.TemporalUnit;
 
+@Lesson(1)
 public class FluxSupplierImpl implements FluxSupplier {
 
     @Override

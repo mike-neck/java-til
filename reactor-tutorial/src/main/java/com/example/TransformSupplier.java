@@ -15,9 +15,11 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Lesson(4)
 public interface TransformSupplier {
 
     Mono<Name> mappingMono(Mono<User> mono);

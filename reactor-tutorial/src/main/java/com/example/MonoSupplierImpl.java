@@ -15,8 +15,10 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import reactor.core.publisher.Mono;
 
+@Lesson(2)
 public class MonoSupplierImpl implements MonoSupplier {
 
     @Override

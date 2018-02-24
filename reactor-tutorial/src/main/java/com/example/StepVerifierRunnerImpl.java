@@ -15,6 +15,7 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -23,6 +24,7 @@ import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Lesson(3)
 public class StepVerifierRunnerImpl implements StepVerifierRunner {
 
     @Override

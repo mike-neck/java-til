@@ -15,10 +15,12 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
 
 import java.util.function.Supplier;
 
+@Lesson(3)
 public interface StepVerifierRunner {
 
     void verifyFooBar(Flux<String> flux);

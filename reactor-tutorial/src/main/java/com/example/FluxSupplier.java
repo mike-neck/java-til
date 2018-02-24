@@ -15,10 +15,12 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
 
 import java.time.temporal.TemporalUnit;
 
+@Lesson(1)
 public interface FluxSupplier {
 
     Flux<String> emptyFlux();

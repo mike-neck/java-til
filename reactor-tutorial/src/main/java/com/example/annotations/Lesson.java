@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.annotations;
 
-import com.example.annotations.Lesson;
-import reactor.core.publisher.Mono;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Lesson(2)
-public interface MonoSupplier {
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.TYPE)
+public @interface Lesson {
 
-    Mono<String> empty();
-
-    Mono<String> never();
-
-    Mono<String> just(String value);
+    int value();
 }
