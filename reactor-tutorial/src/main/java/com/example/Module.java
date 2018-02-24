@@ -26,5 +26,7 @@ public class Module extends AbstractModule {
         bind(StepVerifierRunner.class).to(StepVerifierRunnerImpl.class);
         bind(TransformSupplier.class).to(TransformSupplierImpl.class);
         bind(Merger.class).to(MergerImpl.class);
+        bind(UserRepository.class).to(UserRepositoryImpl.class);
+        bind(SubscribeWithStepVerifier.class).to(SubscribeWithStepVerifierImpl.class);
     }
 }

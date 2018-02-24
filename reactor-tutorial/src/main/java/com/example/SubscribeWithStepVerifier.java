@@ -17,9 +17,10 @@ package com.example;
 
 import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 @Lesson(6)
-public interface UserRepository {
+public interface SubscribeWithStepVerifier {
 
-    Flux<User> findAll();
+    StepVerifier requestAll(Flux<Long> flux);
 }

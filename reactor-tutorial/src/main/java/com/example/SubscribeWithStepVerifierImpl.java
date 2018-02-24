@@ -15,11 +15,25 @@
  */
 package com.example;
 
+
 import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
+
+import javax.inject.Inject;
 
 @Lesson(6)
-public interface UserRepository {
+public class SubscribeWithStepVerifierImpl implements SubscribeWithStepVerifier {
 
-    Flux<User> findAll();
+    private final SubscribeWithStepVerifier subscribe;
+
+    @Inject
+    public SubscribeWithStepVerifierImpl(final SubscribeWithStepVerifier subscribe) {
+        this.subscribe = subscribe;
+    }
+
+    @Override
+    public StepVerifier requestAll(final Flux<Long> flux) {
+        return null;
+    }
 }
