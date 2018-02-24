@@ -17,6 +17,7 @@ package com.example;
 
 import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Lesson(5)
 public class MergerImpl implements Merger {
@@ -29,5 +30,10 @@ public class MergerImpl implements Merger {
     @Override
     public Flux<Long> mergeFromLeftKeepingOrderFromLeft(final Flux<Long> left, final Flux<Long> right) {
         return Flux.concat(left, right);
+    }
+
+    @Override
+    public Flux<Long> mergeFromLeftKeepingOrderFromLeft(final Mono<Long> left, final Mono<Long> right) {
+        return null;
     }
 }

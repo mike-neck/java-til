@@ -20,6 +20,7 @@ import com.sun.scenario.effect.Merge;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
@@ -63,6 +64,20 @@ class MergingTest {
                 .expectNext(100L)
                 .thenAwait(Duration.ofSeconds(6L))
                 .expectNext(101L, 102L)
+                .verifyComplete();
+    }
+
+    @Test
+    void concatMono(final Merger merger) {
+        final Mono<Long> delayed = Mono.defer(() -> Mono.delay(Duration.ofSeconds(3L)).map(value -> value + 100));
+        final Mono<Long> notDelayed = Mono.defer(() -> Mono.delay(Duration.ofSeconds(1L)));
+
+        StepVerifier.withVirtualTime(() -> merger.mergeFromLeftKeepingOrderFromLeft(delayed, notDelayed))
+                .expectSubscription()
+                .expectNoEvent(Duration.ofSeconds(3L))
+                .expectNext(100L)
+                .expectNoEvent(Duration.ofSeconds(1L))
+                .expectNext(0L)
                 .verifyComplete();
     }
 }

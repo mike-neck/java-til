@@ -17,6 +17,7 @@ package com.example;
 
 import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Lesson(5)
 public interface Merger {
@@ -24,4 +25,6 @@ public interface Merger {
     Flux<Long> mergeFlux(Flux<Long> left, Flux<Long> right);
 
     Flux<Long> mergeFromLeftKeepingOrderFromLeft(Flux<Long> left, Flux<Long> right);
+
+    Flux<Long> mergeFromLeftKeepingOrderFromLeft(Mono<Long> left, Mono<Long> right);
 }
