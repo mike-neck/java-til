@@ -46,8 +46,8 @@ public class StepVerifierRunnerImpl implements StepVerifierRunner {
     @Override
     public void verifyUsername(final Flux<User> flux) {
         StepVerifier.create(flux)
-                .assertNext(user -> assertThat(user.getUsername()).isEqualTo("scott"))
-                .assertNext(user -> assertThat(user.getUsername()).isEqualTo("tiger"))
+                .assertNext(user -> assertThat(user.getUsername().asString()).isEqualTo("scott"))
+                .assertNext(user -> assertThat(user.getUsername().asString()).isEqualTo("tiger"))
                 .verifyComplete();
     }
 
