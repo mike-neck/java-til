@@ -15,6 +15,7 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import org.eclipse.collections.impl.factory.Iterables;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ import reactor.test.StepVerifier;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
+@Lesson(1)
 @ExtendWith({ ParameterSupplier.class })
 class FluxSupplierTest {
 

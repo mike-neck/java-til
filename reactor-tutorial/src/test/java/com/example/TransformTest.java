@@ -15,6 +15,7 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;
@@ -22,11 +23,11 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Lesson(4)
 @ExtendWith({ ParameterSupplier.class })
 class TransformTest {
 

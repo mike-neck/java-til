@@ -15,6 +15,7 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
+@Lesson(3)
 @ExtendWith({ParameterSupplier.class})
 class StepVerifierRunnerTest {
 

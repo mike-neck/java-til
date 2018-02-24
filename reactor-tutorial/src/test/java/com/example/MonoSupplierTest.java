@@ -15,12 +15,14 @@
  */
 package com.example;
 
+import com.example.annotations.Lesson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.test.StepVerifier;
 
 import java.time.Duration;
 
+@Lesson(2)
 @ExtendWith({ ParameterSupplier.class })
 class MonoSupplierTest {
 
