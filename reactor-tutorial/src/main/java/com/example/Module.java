@@ -28,5 +28,6 @@ public class Module extends AbstractModule {
         bind(Merger.class).to(MergerImpl.class);
         bind(UserRepository.class).to(UserRepositoryImpl.class);
         bind(SubscribeWithStepVerifier.class).to(SubscribeWithStepVerifierImpl.class);
+        bind(ErrorHandle.class).to(ErrorHandleImpl.class);
     }
 }
