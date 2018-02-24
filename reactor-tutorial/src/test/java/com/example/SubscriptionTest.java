@@ -46,6 +46,6 @@ class SubscriptionTest {
         });
         final StepVerifier stepVerifier = subscribeWithStepVerifier.requestAll(flux);
         executables.add(stepVerifier::verify);
-        assertAll(executables.stream());
+        flux.doOnComplete(() -> assertAll(executables.stream()));
     }
 }
