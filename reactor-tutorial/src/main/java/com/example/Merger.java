@@ -15,16 +15,11 @@
  */
 package com.example;
 
-import com.google.inject.AbstractModule;
+import com.example.annotations.Lesson;
+import reactor.core.publisher.Flux;
 
-public class Module extends AbstractModule {
+@Lesson(5)
+public interface Merger {
 
-    @Override
-    protected void configure() {
-        bind(FluxSupplier.class).to(FluxSupplierImpl.class);
-        bind(MonoSupplier.class).to(MonoSupplierImpl.class);
-        bind(StepVerifierRunner.class).to(StepVerifierRunnerImpl.class);
-        bind(TransformSupplier.class).to(TransformSupplierImpl.class);
-        bind(Merger.class).to(MergerImpl.class);
-    }
+    Flux<Long> mergeFlux(Flux<Long> left, Flux<Long> right);
 }
