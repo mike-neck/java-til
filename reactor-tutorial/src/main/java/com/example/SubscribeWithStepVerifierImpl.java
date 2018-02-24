@@ -25,11 +25,11 @@ import javax.inject.Inject;
 @Lesson(6)
 public class SubscribeWithStepVerifierImpl implements SubscribeWithStepVerifier {
 
-    private final SubscribeWithStepVerifier subscribe;
+    private final UserRepository userRepository;
 
     @Inject
-    public SubscribeWithStepVerifierImpl(final SubscribeWithStepVerifier subscribe) {
-        this.subscribe = subscribe;
+    public SubscribeWithStepVerifierImpl(final UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
