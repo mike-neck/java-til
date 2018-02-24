@@ -39,6 +39,11 @@ public class SubscribeWithStepVerifierImpl implements SubscribeWithStepVerifier 
 
     @Override
     public StepVerifier req1FooReq2BarBaz(final Flux<String> flux) {
-        return null;
+        return StepVerifier.create(flux)
+                .thenRequest(1L)
+                .expectNext("foo")
+                .thenRequest(2L)
+                .expectNext("bar", "baz")
+                .thenCancel();
     }
 }
