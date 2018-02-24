@@ -36,4 +36,9 @@ public class SubscribeWithStepVerifierImpl implements SubscribeWithStepVerifier 
     public StepVerifier requestAll(final Flux<Long> flux) {
         return StepVerifier.create(flux).expectSubscription().expectNextCount(4L).expectComplete();
     }
+
+    @Override
+    public StepVerifier req1FooReq2BarBaz(final Flux<String> flux) {
+        return null;
+    }
 }

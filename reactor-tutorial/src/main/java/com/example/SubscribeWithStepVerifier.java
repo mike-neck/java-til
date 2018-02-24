@@ -23,4 +23,6 @@ import reactor.test.StepVerifier;
 public interface SubscribeWithStepVerifier {
 
     StepVerifier requestAll(Flux<Long> flux);
+
+    StepVerifier req1FooReq2BarBaz(Flux<String> flux);
 }

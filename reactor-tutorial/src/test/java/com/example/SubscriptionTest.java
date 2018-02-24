@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 import reactor.test.StepVerifier;
 
 import java.util.ArrayList;
@@ -47,5 +48,22 @@ class SubscriptionTest {
         final StepVerifier stepVerifier = subscribeWithStepVerifier.requestAll(flux);
         executables.add(stepVerifier::verify);
         flux.doOnComplete(() -> assertAll(executables.stream()));
+    }
+    
+    @Test
+    void backPressureThenCancel(final SubscribeWithStepVerifier subscribeWithStepVerifier) {
+        final List<Executable> executables = new ArrayList<>();
+        final Flux<String> flux = Flux.create(sink -> {
+            final long firstRequest = sink.requestedFromDownstream();
+            executables.add(() -> assertEquals(1L, firstRequest));
+            final FluxSink<String> foo = sink.next("foo");
+            final long secondRequest = foo.requestedFromDownstream();
+            executables.add(() -> assertEquals(2L, secondRequest));
+            foo.next("bar").next("baz");
+        });
+        final StepVerifier stepVerifier = subscribeWithStepVerifier.req1FooReq2BarBaz(flux);
+        executables.add(stepVerifier::verify);
+        flux.doOnCancel(() -> assertAll(
+                () -> assertAll(executables.stream())));
     }
 }
