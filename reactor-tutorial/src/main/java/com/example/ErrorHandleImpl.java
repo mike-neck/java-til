@@ -23,6 +23,6 @@ public class ErrorHandleImpl implements ErrorHandle {
 
     @Override
     public Mono<String> onErrorReturnFoo(final Mono<String> mono) {
-        return null;
+        return mono.onErrorReturn("foo");
     }
 }
