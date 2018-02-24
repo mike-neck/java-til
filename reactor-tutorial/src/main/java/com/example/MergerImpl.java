@@ -23,6 +23,6 @@ public class MergerImpl implements Merger {
 
     @Override
     public Flux<Long> mergeFlux(final Flux<Long> left, final Flux<Long> right) {
-        return null;
+        return Flux.merge(left, right);
     }
 }
