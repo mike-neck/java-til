@@ -25,4 +25,9 @@ public class MergerImpl implements Merger {
     public Flux<Long> mergeFlux(final Flux<Long> left, final Flux<Long> right) {
         return Flux.merge(left, right);
     }
+
+    @Override
+    public Flux<Long> mergeFromLeftKeepingOrderFromLeft(final Flux<Long> left, final Flux<Long> right) {
+        return null;
+    }
 }

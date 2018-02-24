@@ -16,6 +16,7 @@
 package com.example;
 
 import com.example.annotations.Lesson;
+import com.sun.scenario.effect.Merge;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;
@@ -25,7 +26,7 @@ import java.time.Duration;
 
 @Lesson(5)
 @ExtendWith({ParameterSupplier.class})
-public class MergingTest {
+class MergingTest {
 
     @Test
     void mergingFlux(final Merger merger) {
@@ -44,6 +45,24 @@ public class MergingTest {
                 .expectNext(102L)
                 .thenAwait(Duration.ofSeconds(3L))
                 .expectNext(1L)
+                .verifyComplete();
+    }
+
+    @Test
+    void concatFlux(final Merger merger) {
+        final Flux<Long> delayed = Flux.defer(() -> Flux.interval(Duration.ofSeconds(5L), Duration.ofSeconds(7L)).log("delayed").take(2L));
+        final Flux<Long> notDelayed = Flux.defer(() -> Flux.interval(Duration.ofSeconds(3L)).map(value -> value + 100).log("not-delayed").take(3L));
+
+        StepVerifier.withVirtualTime(() -> merger.mergeFromLeftKeepingOrderFromLeft(delayed, notDelayed))
+                .expectSubscription()
+                .thenAwait(Duration.ofSeconds(5L))
+                .expectNext(0L)
+                .thenAwait(Duration.ofSeconds(7L))
+                .expectNext(1L)
+                .thenAwait(Duration.ofSeconds(3L))
+                .expectNext(100L)
+                .thenAwait(Duration.ofSeconds(6L))
+                .expectNext(101L, 102L)
                 .verifyComplete();
     }
 }

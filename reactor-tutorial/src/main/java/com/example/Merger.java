@@ -22,4 +22,6 @@ import reactor.core.publisher.Flux;
 public interface Merger {
 
     Flux<Long> mergeFlux(Flux<Long> left, Flux<Long> right);
+
+    Flux<Long> mergeFromLeftKeepingOrderFromLeft(Flux<Long> left, Flux<Long> right);
 }
