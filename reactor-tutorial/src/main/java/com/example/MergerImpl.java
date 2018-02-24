@@ -34,6 +34,6 @@ public class MergerImpl implements Merger {
 
     @Override
     public Flux<Long> mergeFromLeftKeepingOrderFromLeft(final Mono<Long> left, final Mono<Long> right) {
-        return null;
+        return Flux.concat(left, right);
     }
 }
