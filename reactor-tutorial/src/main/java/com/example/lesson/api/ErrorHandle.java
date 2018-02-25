@@ -36,7 +36,7 @@ public interface ErrorHandle {
             throw new FooBarSizeException(string + " is too long.");
         }
         return IntLists.immutable.ofAll(string.codePoints())
-                .collectWithIndex((ch, index) -> index == 0 ? Character.toUpperCase(ch) : (char) ch)
+                .collectWithIndex((ch, index) -> index == 0 ? (char)Character.toUpperCase(ch) : (char)ch)
                 .makeString("");
     }
 }

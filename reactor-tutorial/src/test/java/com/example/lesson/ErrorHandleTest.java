@@ -59,7 +59,7 @@ class ErrorHandleTest {
         final Flux<String> actual = errorHandle.propagateException(flux);
         StepVerifier.create(actual)
                 .expectSubscription()
-                .expectNext("foo", "bar", "baz", "qux")
+                .expectNext("Foo", "Bar", "Baz", "Qux")
                 .expectError(FooBarSizeException.class)
                 .verify();
     }

@@ -17,6 +17,8 @@ package com.example.lesson;
 
 import com.example.annotations.Lesson;
 import com.example.lesson.api.ErrorHandle;
+import com.example.lesson.api.FooBarSizeException;
+import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,6 +37,12 @@ public class ErrorHandleImpl implements ErrorHandle {
 
     @Override
     public Flux<String> propagateException(final Flux<String> flux) {
-        return flux;
+        return flux.map(string -> {
+            try {
+                return ErrorHandle.capitalizeFooBar(string);
+            } catch (FooBarSizeException e) {
+                throw  Exceptions.propagate(e);
+            }
+        });
     }
 }
