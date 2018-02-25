@@ -64,4 +64,15 @@ class ReactiveXAdapterTest {
                 .expectNext("baz")
                 .verifyComplete();
     }
+
+    @Test
+    void fromObservableToFlux(final ReactiveXAdapter adapter) {
+        final Observable<String> observable = Observable.fromArray("foo", "bar", "baz", "qux");
+        final Flux<String> flux = adapter.fromObservableToFlux(observable);
+        StepVerifier.create(flux)
+                .expectSubscription()
+                .expectNext("foo", "bar")
+                .expectNext("baz", "qux")
+                .verifyComplete();
+    }
 }

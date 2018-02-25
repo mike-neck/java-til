@@ -17,6 +17,7 @@ package com.example.lesson;
 
 import com.example.annotations.Lesson;
 import com.example.lesson.api.ReactiveXAdapter;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import reactor.core.publisher.Flux;
@@ -37,5 +38,11 @@ public class ReactiveXAdapterImpl implements ReactiveXAdapter {
     @Override
     public Observable<String> fromFluxToObservable(final Flux<String> flux) {
         return Flowable.fromPublisher(flux).toObservable();
+    }
+
+    @Override
+    public Flux<String> fromObservableToFlux(final Observable<String> observable) {
+        final Flowable<String> flowable = observable.toFlowable(BackpressureStrategy.BUFFER);
+        return Flux.from(flowable);
     }
 }

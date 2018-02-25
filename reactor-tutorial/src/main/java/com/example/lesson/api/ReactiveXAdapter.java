@@ -28,4 +28,6 @@ public interface ReactiveXAdapter {
     Flux<String> fromFlowableToFlux(Flowable<String> flowable);
 
     Observable<String> fromFluxToObservable(Flux<String> flux);
+
+    Flux<String> fromObservableToFlux(Observable<String> observable);
 }
