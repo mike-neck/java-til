@@ -18,7 +18,9 @@ package com.example.lesson;
 import com.example.ParameterSupplier;
 import com.example.annotations.Lesson;
 import com.example.lesson.api.ReactiveXAdapter;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;
@@ -48,6 +50,18 @@ class ReactiveXAdapterTest {
                 .expectSubscription()
                 .expectNext("foo")
                 .expectNext("bar", "baz", "qux")
+                .verifyComplete();
+    }
+
+    @Test
+    void fromFluxToObservable(final ReactiveXAdapter adapter) {
+        final Flux<String> flux = Flux.just("foo", "bar", "baz");
+        final Observable<String> observable = adapter.fromFluxToObservable(flux);
+        StepVerifier.create(observable.toFlowable(BackpressureStrategy.BUFFER))
+                .expectSubscription()
+                .expectNext("foo")
+                .expectNext("bar")
+                .expectNext("baz")
                 .verifyComplete();
     }
 }

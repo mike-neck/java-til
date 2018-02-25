@@ -18,6 +18,7 @@ package com.example.lesson;
 import com.example.annotations.Lesson;
 import com.example.lesson.api.ReactiveXAdapter;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import reactor.core.publisher.Flux;
 
 @Lesson(8)
@@ -33,4 +34,8 @@ public class ReactiveXAdapterImpl implements ReactiveXAdapter {
         return Flux.from(flowable);
     }
 
+    @Override
+    public Observable<String> fromFluxToObservable(final Flux<String> flux) {
+        return Flowable.fromPublisher(flux).toObservable();
+    }
 }
