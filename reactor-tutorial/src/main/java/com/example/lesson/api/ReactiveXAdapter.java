@@ -18,7 +18,9 @@ package com.example.lesson.api;
 import com.example.annotations.Lesson;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Lesson(8)
 public interface ReactiveXAdapter {
@@ -30,4 +32,6 @@ public interface ReactiveXAdapter {
     Observable<String> fromFluxToObservable(Flux<String> flux);
 
     Flux<String> fromObservableToFlux(Observable<String> observable);
+
+    Single<String> fromMonoToSingle(Mono<String> mono);
 }

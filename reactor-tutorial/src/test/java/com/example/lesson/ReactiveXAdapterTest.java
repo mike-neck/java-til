@@ -21,9 +21,11 @@ import com.example.lesson.api.ReactiveXAdapter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @Lesson(8)
@@ -73,6 +75,16 @@ class ReactiveXAdapterTest {
                 .expectSubscription()
                 .expectNext("foo", "bar")
                 .expectNext("baz", "qux")
+                .verifyComplete();
+    }
+
+    @Test
+    void fromMonoToSingle(final ReactiveXAdapter adapter) {
+        final Mono<String> mono = Mono.just("foo");
+        final Single<String> single = adapter.fromMonoToSingle(mono);
+        StepVerifier.create(single.toFlowable())
+                .expectSubscription()
+                .expectNext("foo")
                 .verifyComplete();
     }
 }

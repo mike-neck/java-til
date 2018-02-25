@@ -20,7 +20,9 @@ import com.example.lesson.api.ReactiveXAdapter;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Lesson(8)
 public class ReactiveXAdapterImpl implements ReactiveXAdapter {
@@ -44,5 +46,10 @@ public class ReactiveXAdapterImpl implements ReactiveXAdapter {
     public Flux<String> fromObservableToFlux(final Observable<String> observable) {
         final Flowable<String> flowable = observable.toFlowable(BackpressureStrategy.BUFFER);
         return Flux.from(flowable);
+    }
+
+    @Override
+    public Single<String> fromMonoToSingle(final Mono<String> mono) {
+        return Single.fromPublisher(mono);
     }
 }
