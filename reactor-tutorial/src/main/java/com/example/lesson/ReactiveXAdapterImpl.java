@@ -64,4 +64,9 @@ public class ReactiveXAdapterImpl implements ReactiveXAdapter {
     public CompletableFuture<String> fromMonoToCompletableFuture(final Mono<String> mono) {
         return mono.toFuture();
     }
+
+    @Override
+    public Mono<String> fromCompletableFutureToMono(final CompletableFuture<String> future) {
+        return Mono.fromFuture(future);
+    }
 }

@@ -30,6 +30,8 @@ import reactor.test.StepVerifier;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -111,5 +113,16 @@ class ReactiveXAdapterTest {
         future.thenAccept(string -> assertThat(string).isEqualTo("foo"))
                 .thenAccept(v -> latch.countDown());
         latch.await();
+    }
+
+    @Test
+    void fromFutureToMono(final ReactiveXAdapter adapter) {
+        final ExecutorService executorService = Executors.newFixedThreadPool(1);
+        final CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> "foo", executorService);
+        final Mono<String> mono = adapter.fromCompletableFutureToMono(future);
+        StepVerifier.create(mono.doOnTerminate(executorService::shutdown))
+                .expectSubscription()
+                .expectNext("foo")
+                .verifyComplete();
     }
 }

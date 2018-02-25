@@ -40,4 +40,6 @@ public interface ReactiveXAdapter {
     Mono<String> fromSingleToMono(Single<String> single);
 
     CompletableFuture<String> fromMonoToCompletableFuture(Mono<String> mono);
+
+    Mono<String> fromCompletableFutureToMono(CompletableFuture<String> future);
 }
