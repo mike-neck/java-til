@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson.api;
 
 import com.example.annotations.Lesson;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Lesson(7)
-public interface ErrorHandle {
+@Lesson(2)
+public interface MonoSupplier {
 
-    Mono<String> onErrorReturnFoo(Mono<String> mono);
+    Mono<String> empty();
 
-    Flux<String> onErrorResumeFluxBarBaz(Flux<String> flux);
+    Mono<String> never();
+
+    Mono<String> just(String value);
 }

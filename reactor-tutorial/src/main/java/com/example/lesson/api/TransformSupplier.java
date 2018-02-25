@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson.api;
 
+import com.example.Name;
+import com.example.User;
 import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Lesson(4)
-public class TransformSupplierImpl implements TransformSupplier {
+public interface TransformSupplier {
 
-    @Override
-    public Mono<Name> mappingMono(final Mono<User> mono) {
-        return mono.map(User::capitalizedName);
-    }
+    Mono<Name> mappingMono(Mono<User> mono);
 
-    @Override
-    public Flux<Name> mappingFlux(final Flux<User> flux) {
-        return flux.map(User::capitalizedName);
-    }
+    Flux<Name> mappingFlux(Flux<User> flux);
 
-    @Override
-    public Flux<Name> flatMappingFlux(final Flux<User> flux) {
-        return flux.flatMap(User::asyncCapitalizedName);
-    }
+    Flux<Name> flatMappingFlux(Flux<User> flux);
 }

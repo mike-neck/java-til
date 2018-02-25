@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson;
 
+import com.example.lesson.api.Merger;
+import com.example.ParameterSupplier;
 import com.example.annotations.Lesson;
-import com.sun.scenario.effect.Merge;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;

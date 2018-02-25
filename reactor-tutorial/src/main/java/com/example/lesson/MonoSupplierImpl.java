@@ -13,16 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson;
 
 import com.example.annotations.Lesson;
-import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
+import com.example.lesson.api.MonoSupplier;
+import reactor.core.publisher.Mono;
 
-@Lesson(6)
-public interface SubscribeWithStepVerifier {
+@Lesson(2)
+public class MonoSupplierImpl implements MonoSupplier {
 
-    StepVerifier requestAll(Flux<Long> flux);
+    @Override
+    public Mono<String> empty() {
+        return Mono.empty();
+    }
 
-    StepVerifier req1FooReq2BarBaz(Flux<String> flux);
+    @Override
+    public Mono<String> never() {
+        return Mono.never();
+    }
+
+    @Override
+    public Mono<String> just(final String value) {
+        return Mono.just(value);
+    }
 }

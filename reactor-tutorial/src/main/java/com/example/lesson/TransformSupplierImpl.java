@@ -13,39 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson;
 
+import com.example.Name;
+import com.example.User;
 import com.example.annotations.Lesson;
+import com.example.lesson.api.TransformSupplier;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.time.Duration;
-import java.time.temporal.TemporalUnit;
-
-@Lesson(1)
-public class FluxSupplierImpl implements FluxSupplier {
+@Lesson(4)
+public class TransformSupplierImpl implements TransformSupplier {
 
     @Override
-    public Flux<String> emptyFlux() {
-        return Flux.empty();
+    public Mono<Name> mappingMono(final Mono<User> mono) {
+        return mono.map(User::capitalizedName);
     }
 
     @Override
-    public Flux<String> fromValues(final String... values) {
-        return Flux.just(values);
+    public Flux<Name> mappingFlux(final Flux<User> flux) {
+        return flux.map(User::capitalizedName);
     }
 
     @Override
-    public Flux<String> fromIterable(final Iterable<String> iterable) {
-        return Flux.fromIterable(iterable);
-    }
-
-    @Override
-    public Flux<String> error() {
-        return Flux.error(new IllegalStateException(), true);
-    }
-
-    @Override
-    public Flux<Long> interval(final long duration, final TemporalUnit unit) {
-        return Flux.interval(Duration.of(duration, unit)).take(10);
+    public Flux<Name> flatMappingFlux(final Flux<User> flux) {
+        return flux.flatMap(User::asyncCapitalizedName);
     }
 }

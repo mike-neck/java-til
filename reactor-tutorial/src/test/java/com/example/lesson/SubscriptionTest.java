@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson;
 
+import com.example.ParameterSupplier;
+import com.example.lesson.api.SubscribeWithStepVerifier;
 import com.example.annotations.Lesson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

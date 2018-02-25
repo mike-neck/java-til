@@ -15,6 +15,8 @@
  */
 package com.example;
 
+import com.example.lesson.*;
+import com.example.lesson.api.*;
 import com.google.inject.AbstractModule;
 
 public class Module extends AbstractModule {

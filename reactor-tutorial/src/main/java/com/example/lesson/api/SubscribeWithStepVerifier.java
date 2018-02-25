@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson.api;
 
 import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
-import java.util.function.Supplier;
+@Lesson(6)
+public interface SubscribeWithStepVerifier {
 
-@Lesson(3)
-public interface StepVerifierRunner {
+    StepVerifier requestAll(Flux<Long> flux);
 
-    void verifyFooBar(Flux<String> flux);
-
-    void verifyFooBarThenException(Flux<String> flux);
-
-    void verifyUsername(Flux<User> flux);
-
-    void verify10Items(Flux<Integer> flux);
-
-    void verifyTooLongFlux(Supplier<Flux<Long>> flux);
-
+    StepVerifier req1FooReq2BarBaz(Flux<String> flux);
 }

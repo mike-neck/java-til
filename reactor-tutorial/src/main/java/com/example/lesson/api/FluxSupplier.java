@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson.api;
 
 import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;

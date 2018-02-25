@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson.api;
 
 import com.example.annotations.Lesson;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@Lesson(2)
-public interface MonoSupplier {
+@Lesson(5)
+public interface Merger {
 
-    Mono<String> empty();
+    Flux<Long> mergeFlux(Flux<Long> left, Flux<Long> right);
 
-    Mono<String> never();
+    Flux<Long> mergeFromLeftKeepingOrderFromLeft(Flux<Long> left, Flux<Long> right);
 
-    Mono<String> just(String value);
+    Flux<Long> mergeFromLeftKeepingOrderFromLeft(Mono<Long> left, Mono<Long> right);
 }

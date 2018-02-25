@@ -13,18 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example;
+package com.example.lesson.api;
 
+import com.example.User;
 import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-@Lesson(4)
-public interface TransformSupplier {
+import java.util.function.Supplier;
 
-    Mono<Name> mappingMono(Mono<User> mono);
+@Lesson(3)
+public interface StepVerifierRunner {
 
-    Flux<Name> mappingFlux(Flux<User> flux);
+    void verifyFooBar(Flux<String> flux);
 
-    Flux<Name> flatMappingFlux(Flux<User> flux);
+    void verifyFooBarThenException(Flux<String> flux);
+
+    void verifyUsername(Flux<User> flux);
+
+    void verify10Items(Flux<Integer> flux);
+
+    void verifyTooLongFlux(Supplier<Flux<Long>> flux);
+
 }
