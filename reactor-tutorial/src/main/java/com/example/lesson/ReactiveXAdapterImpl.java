@@ -52,4 +52,9 @@ public class ReactiveXAdapterImpl implements ReactiveXAdapter {
     public Single<String> fromMonoToSingle(final Mono<String> mono) {
         return Single.fromPublisher(mono);
     }
+
+    @Override
+    public Mono<String> fromSingleToMono(final Single<String> single) {
+        return Mono.from(single.toFlowable());
+    }
 }

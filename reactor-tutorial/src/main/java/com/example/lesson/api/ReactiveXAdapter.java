@@ -34,4 +34,6 @@ public interface ReactiveXAdapter {
     Flux<String> fromObservableToFlux(Observable<String> observable);
 
     Single<String> fromMonoToSingle(Mono<String> mono);
+
+    Mono<String> fromSingleToMono(Single<String> single);
 }

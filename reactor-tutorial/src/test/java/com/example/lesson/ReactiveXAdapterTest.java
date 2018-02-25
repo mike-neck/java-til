@@ -87,4 +87,14 @@ class ReactiveXAdapterTest {
                 .expectNext("foo")
                 .verifyComplete();
     }
+
+    @Test
+    void fromSingleToMono(final ReactiveXAdapter adapter) {
+        final Single<String> single = Single.just("foo");
+        final Mono<String> mono = adapter.fromSingleToMono(single);
+        StepVerifier.create(mono)
+                .expectSubscription()
+                .expectNext("foo")
+                .verifyComplete();
+    }
 }
