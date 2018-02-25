@@ -28,6 +28,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 @Lesson(8)
 @ExtendWith({ParameterSupplier.class})
 class ReactiveXAdapterTest {
@@ -96,5 +101,15 @@ class ReactiveXAdapterTest {
                 .expectSubscription()
                 .expectNext("foo")
                 .verifyComplete();
+    }
+
+    @Test
+    void fromMonoToCompletableFuture(final ReactiveXAdapter adapter) throws InterruptedException {
+        final Mono<String> mono = Mono.just("foo");
+        final CompletableFuture<String> future = adapter.fromMonoToCompletableFuture(mono);
+        final CountDownLatch latch = new CountDownLatch(1);
+        future.thenAccept(string -> assertThat(string).isEqualTo("foo"))
+                .thenAccept(v -> latch.countDown());
+        latch.await();
     }
 }

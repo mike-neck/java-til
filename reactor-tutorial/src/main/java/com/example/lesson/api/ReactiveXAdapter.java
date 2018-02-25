@@ -22,6 +22,8 @@ import io.reactivex.Single;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.CompletableFuture;
+
 @Lesson(8)
 public interface ReactiveXAdapter {
 
@@ -36,4 +38,6 @@ public interface ReactiveXAdapter {
     Single<String> fromMonoToSingle(Mono<String> mono);
 
     Mono<String> fromSingleToMono(Single<String> single);
+
+    CompletableFuture<String> fromMonoToCompletableFuture(Mono<String> mono);
 }

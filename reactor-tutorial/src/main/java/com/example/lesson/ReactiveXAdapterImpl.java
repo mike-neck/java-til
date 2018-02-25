@@ -24,6 +24,8 @@ import io.reactivex.Single;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.CompletableFuture;
+
 @Lesson(8)
 public class ReactiveXAdapterImpl implements ReactiveXAdapter {
 
@@ -56,5 +58,10 @@ public class ReactiveXAdapterImpl implements ReactiveXAdapter {
     @Override
     public Mono<String> fromSingleToMono(final Single<String> single) {
         return Mono.from(single.toFlowable());
+    }
+
+    @Override
+    public CompletableFuture<String> fromMonoToCompletableFuture(final Mono<String> mono) {
+        return mono.toFuture();
     }
 }
