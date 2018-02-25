@@ -16,6 +16,7 @@
 package com.example;
 
 import com.example.annotations.Lesson;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Lesson(7)
@@ -24,5 +25,10 @@ public class ErrorHandleImpl implements ErrorHandle {
     @Override
     public Mono<String> onErrorReturnFoo(final Mono<String> mono) {
         return mono.onErrorReturn("foo");
+    }
+
+    @Override
+    public Flux<String> onErrorResumeFluxBarBaz(final Flux<String> flux) {
+        return flux;
     }
 }

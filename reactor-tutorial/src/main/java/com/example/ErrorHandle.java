@@ -16,10 +16,13 @@
 package com.example;
 
 import com.example.annotations.Lesson;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Lesson(7)
 public interface ErrorHandle {
 
     Mono<String> onErrorReturnFoo(Mono<String> mono);
+
+    Flux<String> onErrorResumeFluxBarBaz(Flux<String> flux);
 }

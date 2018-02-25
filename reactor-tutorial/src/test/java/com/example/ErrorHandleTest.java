@@ -18,6 +18,7 @@ package com.example;
 import com.example.annotations.Lesson;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -33,6 +34,18 @@ class ErrorHandleTest {
         StepVerifier.create(errorHandle.onErrorReturnFoo(mono))
                 .expectSubscription()
                 .expectNext("foo")
+                .verifyComplete();
+    }
+
+    @Test
+    void onErrorResume(final ErrorHandle errorHandle) {
+        final Flux<String> flux = Flux.concat(Mono.just("foo"),
+                Mono.error(new RuntimeException("resume after this error.")),
+                Mono.just("this value wouldn't be appeared."));
+        final Flux<String> actual = errorHandle.onErrorResumeFluxBarBaz(flux);
+        StepVerifier.create(actual)
+                .expectSubscription()
+                .expectNext("foo", "bar", "baz")
                 .verifyComplete();
     }
 }
