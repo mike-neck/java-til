@@ -18,8 +18,10 @@ package com.example.lesson;
 import com.example.ParameterSupplier;
 import com.example.annotations.Lesson;
 import com.example.lesson.api.ErrorHandle;
+import com.example.lesson.api.FooBarSizeException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -49,5 +51,16 @@ class ErrorHandleTest {
                 .expectSubscription()
                 .expectNext("foo", "bar", "baz")
                 .verifyComplete();
+    }
+
+    @Test
+    void exceptionPropagate(final ErrorHandle errorHandle) {
+        final Flux<String> flux = Flux.just("foo", "bar", "baz", "qux", "quux");
+        final Flux<String> actual = errorHandle.propagateException(flux);
+        StepVerifier.create(actual)
+                .expectSubscription()
+                .expectNext("foo", "bar", "baz", "qux")
+                .expectError(FooBarSizeException.class)
+                .verify();
     }
 }

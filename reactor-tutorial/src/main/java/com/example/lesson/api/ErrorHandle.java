@@ -16,6 +16,8 @@
 package com.example.lesson.api;
 
 import com.example.annotations.Lesson;
+import org.eclipse.collections.api.block.function.primitive.IntIntToObjectFunction;
+import org.eclipse.collections.impl.factory.primitive.IntLists;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -25,4 +27,16 @@ public interface ErrorHandle {
     Mono<String> onErrorReturnFoo(Mono<String> mono);
 
     Flux<String> onErrorResumeFluxBarBaz(Flux<String> flux);
+
+    Flux<String> propagateException(Flux<String> flux);
+
+    static String capitalizeFooBar(final String string) throws FooBarSizeException {
+        final long size = string.codePoints().count();
+        if (size > 3) {
+            throw new FooBarSizeException(string + " is too long.");
+        }
+        return IntLists.immutable.ofAll(string.codePoints())
+                .collectWithIndex((ch, index) -> index == 0 ? Character.toUpperCase(ch) : (char) ch)
+                .makeString("");
+    }
 }

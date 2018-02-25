@@ -32,4 +32,9 @@ public class ErrorHandleImpl implements ErrorHandle {
     public Flux<String> onErrorResumeFluxBarBaz(final Flux<String> flux) {
         return flux.onErrorResume(any -> Flux.just("bar", "baz"));
     }
+
+    @Override
+    public Flux<String> propagateException(final Flux<String> flux) {
+        return flux;
+    }
 }
