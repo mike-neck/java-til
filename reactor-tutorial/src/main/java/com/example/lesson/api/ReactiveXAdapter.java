@@ -23,4 +23,6 @@ import reactor.core.publisher.Flux;
 public interface ReactiveXAdapter {
 
     Flowable<String> fromFluxToFlowable(Flux<String> flux);
+
+    Flux<String> fromFlowableToFlux(Flowable<String> flowable);
 }

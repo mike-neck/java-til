@@ -39,4 +39,15 @@ class ReactiveXAdapterTest {
                 .expectNext("baz")
                 .verifyComplete();
     }
+
+    @Test
+    void fromFlowableToFlux(final ReactiveXAdapter adapter) {
+        final Flowable<String> flowable = Flowable.fromArray("foo", "bar", "baz", "qux");
+        final Flux<String> flux = adapter.fromFlowableToFlux(flowable);
+        StepVerifier.create(flux)
+                .expectSubscription()
+                .expectNext("foo")
+                .expectNext("bar", "baz", "qux")
+                .verifyComplete();
+    }
 }

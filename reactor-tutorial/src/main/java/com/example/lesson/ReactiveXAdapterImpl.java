@@ -27,4 +27,10 @@ public class ReactiveXAdapterImpl implements ReactiveXAdapter {
     public Flowable<String> fromFluxToFlowable(final Flux<String> flux) {
         return Flowable.fromPublisher(flux);
     }
+
+    @Override
+    public Flux<String> fromFlowableToFlux(final Flowable<String> flowable) {
+        return Flux.from(flowable);
+    }
+
 }
