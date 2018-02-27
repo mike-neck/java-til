@@ -32,5 +32,6 @@ public class Module extends AbstractModule {
         bind(SubscribeWithStepVerifier.class).to(SubscribeWithStepVerifierImpl.class);
         bind(ErrorHandle.class).to(ErrorHandleImpl.class);
         bind(ReactiveXAdapter.class).to(ReactiveXAdapterImpl.class);
+        bind(Operations.class).to(OperationsImpl.class);
     }
 }
