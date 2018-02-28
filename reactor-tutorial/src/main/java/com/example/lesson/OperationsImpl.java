@@ -48,6 +48,6 @@ public class OperationsImpl implements Operations {
 
     @Override
     public Mono<String> nullAwareMono(final String foo) {
-        return null;
+        return Mono.justOrEmpty(foo);
     }
 }
