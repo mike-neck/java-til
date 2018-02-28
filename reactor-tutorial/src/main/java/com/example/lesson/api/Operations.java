@@ -30,4 +30,6 @@ public interface Operations {
     Mono<String> fastestMonoValue(Mono<String> left, Mono<String> right);
 
     Flux<String> firstEmittingNotMixed(Flux<String> left, Flux<String> right);
+
+    Mono<Void> completeWithThen(Flux<Long> flux);
 }

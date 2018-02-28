@@ -76,4 +76,13 @@ class OperationTest {
                 .expectNext("item-2")
                 .verifyComplete();
     }
+
+    @Test
+    void fluxCompletionByThen(final Operations operations) {
+        final Flux<Long> flux = Flux.defer(() -> Flux.interval(Duration.ofMillis(30L)).take(10));
+        StepVerifier.withVirtualTime(() -> operations.completeWithThen(flux))
+                .expectSubscription()
+                .expectNoEvent(Duration.ofMillis(30 * 10))
+                .verifyComplete();
+    }
 }

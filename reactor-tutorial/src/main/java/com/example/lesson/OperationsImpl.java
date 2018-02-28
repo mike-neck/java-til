@@ -40,4 +40,9 @@ public class OperationsImpl implements Operations {
     public Flux<String> firstEmittingNotMixed(final Flux<String> left, final Flux<String> right) {
         return Flux.first(left, right);
     }
+
+    @Override
+    public Mono<Void> completeWithThen(final Flux<Long> flux) {
+        return flux.then();
+    }
 }
