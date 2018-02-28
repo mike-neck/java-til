@@ -38,6 +38,6 @@ public class OperationsImpl implements Operations {
 
     @Override
     public Flux<String> firstEmittingNotMixed(final Flux<String> left, final Flux<String> right) {
-        return null;
+        return Flux.first(left, right);
     }
 }

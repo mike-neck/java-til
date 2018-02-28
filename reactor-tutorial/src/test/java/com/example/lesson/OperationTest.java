@@ -67,12 +67,13 @@ class OperationTest {
                 () -> Flux.just("foo", "bar", "baz").delaySequence(Duration.ofSeconds(10L)).delayElements(Duration.ofSeconds(2L)));
         final Flux<String> right = Flux.defer(() -> Flux.interval(Duration.ofSeconds(9L), Duration.ofSeconds(3L)).map(v -> String.format("item-%d", v)).take(3L));
         StepVerifier.withVirtualTime(() -> operations.firstEmittingNotMixed(left, right))
+                .expectSubscription()
                 .expectNoEvent(Duration.ofSeconds(9L))
+                .expectNext("item-0")
+                .expectNoEvent(Duration.ofSeconds(3L))
                 .expectNext("item-1")
                 .expectNoEvent(Duration.ofSeconds(3L))
                 .expectNext("item-2")
-                .expectNoEvent(Duration.ofSeconds(3L))
-                .expectNext("item-3")
                 .verifyComplete();
     }
 }
