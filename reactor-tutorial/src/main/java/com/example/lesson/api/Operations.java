@@ -18,6 +18,7 @@ package com.example.lesson.api;
 import com.example.annotations.Lesson;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.annotation.Nullable;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -32,4 +33,6 @@ public interface Operations {
     Flux<String> firstEmittingNotMixed(Flux<String> left, Flux<String> right);
 
     Mono<Void> completeWithThen(Flux<Long> flux);
+
+    Mono<String> nullAwareMono(@Nullable String foo);
 }

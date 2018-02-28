@@ -45,4 +45,9 @@ public class OperationsImpl implements Operations {
     public Mono<Void> completeWithThen(final Flux<Long> flux) {
         return flux.then();
     }
+
+    @Override
+    public Mono<String> nullAwareMono(final String foo) {
+        return null;
+    }
 }

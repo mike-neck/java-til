@@ -28,6 +28,8 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 @Lesson(9)
 @ExtendWith({ParameterSupplier.class})
 class OperationTest {
@@ -84,5 +86,15 @@ class OperationTest {
                 .expectSubscription()
                 .expectNoEvent(Duration.ofMillis(30 * 10))
                 .verifyComplete();
+    }
+
+    @Test
+    void nullAwarenessStaticFactoryMethod(final Operations operations) {
+        final Mono<String> firstMono = operations.nullAwareMono("foo");
+        final Mono<String> secondMono = operations.nullAwareMono(null);
+        assertAll(
+                () -> StepVerifier.create(firstMono.hasElement()).expectNext(true).verifyComplete(),
+                () -> StepVerifier.create(secondMono.hasElement()).expectNext(false).verifyComplete()
+        );
     }
 }
