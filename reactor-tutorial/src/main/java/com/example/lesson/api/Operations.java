@@ -28,4 +28,6 @@ public interface Operations {
     Flux<LocalDate> zipFluxToLocalDate(Flux<Integer> yearFlux, Flux<Month> monthFlux, Flux<Integer> dayOfMonthFlux);
 
     Mono<String> fastestMonoValue(Mono<String> left, Mono<String> right);
+
+    Flux<String> firstEmittingNotMixed(Flux<String> left, Flux<String> right);
 }

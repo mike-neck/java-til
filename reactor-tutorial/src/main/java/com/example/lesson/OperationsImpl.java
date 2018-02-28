@@ -35,4 +35,9 @@ public class OperationsImpl implements Operations {
     public Mono<String> fastestMonoValue(final Mono<String> left, final Mono<String> right) {
         return Mono.first(left, right);
     }
+
+    @Override
+    public Flux<String> firstEmittingNotMixed(final Flux<String> left, final Flux<String> right) {
+        return null;
+    }
 }
