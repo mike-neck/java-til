@@ -33,6 +33,8 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.*;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 @ExtendWith({ParameterSupplier.class})
 @Lesson(11)
 class FromBlockingTest {
@@ -65,27 +67,22 @@ class FromBlockingTest {
 
     @Test
     void toBlockingConsumerWithPublishOnScheduler(final FromBlocking fromBlocking) {
-        final BlockingWriterImpl writer = new BlockingWriterImpl();
-        final Flux<String> tester = Flux.create(writer::setSink).log()
-                .subscribeOn(Schedulers.parallel());
+        final BlockingWriterImpl writer = new BlockingWriterImpl(3);
+        final Flux<String> tester = Flux.create(writer::setSink).log();
 
         final Flux<String> flux = Flux.just("foo", "bar", "baz").log()
                 .doOnTerminate(writer::close);
 
         final Mono<Void> mono = fromBlocking.fluxToBlockingConsumer(flux, writer);
-        final ExecutorService executors = Executors.newFixedThreadPool(2);
-        final CompletableFuture<Duration> future1 = CompletableFuture.supplyAsync(
-                () -> StepVerifier.create(mono).verifyComplete(), executors);
-        final CompletableFuture<Duration> future2 = CompletableFuture.supplyAsync(
+
+        assertAll(
+                () -> StepVerifier.create(mono).verifyComplete(),
                 () -> StepVerifier.create(tester)
                         .expectNext("foo")
                         .expectNext("bar")
                         .expectNext("baz")
                         .verifyComplete()
-        , executors);
-        final CompletableFuture<Void> finish = CompletableFuture.allOf(future1, future2);
-        finish.join();
-        executors.shutdown();
+        );
     }
 }
 
@@ -97,35 +94,42 @@ class BlockingWriterImpl implements BlockingWriter {
 
     private FluxSink<String> sink;
 
+    private final CountDownLatch latch;
+
+    BlockingWriterImpl(final int expectedCount) {
+        latch = new CountDownLatch(expectedCount);
+    }
+
     public void setSink(final FluxSink<String> sink) {
         this.sink = sink;
         sink.onRequest(this::publish);
-        sink.onDispose(() -> {
-            System.out.println("disposed.");
-            executor.shutdown();
-        });
-        sink.onCancel(() -> System.out.println("cancel - tester"));
+        sink.onDispose(executor::shutdown);
+        sink.onCancel(executor::shutdown);
     }
 
     private void publish(final long request) {
         final long size = request <= queue.size() ? request : queue.size();
-        System.out.println(String.format("request: %d", request));
         for (long i = 0; i < size; i++) {
             final String poll = queue.poll();
-            System.out.println(String.format("next: %s", poll));
             sink.next(poll);
+            latch.countDown();
         }
     }
 
     @Override
     public void write(final String value) {
-        System.out.println(value);
         queue.offer(value);
     }
 
     @Override
     public void close() {
-        System.out.println("closing");
-        CompletableFuture.runAsync(() -> Objects.requireNonNull(sink).complete(), executor);
+        CompletableFuture.runAsync(() -> {
+            try {
+                latch.await();
+                Objects.requireNonNull(sink).complete();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }, executor);
     }
 }
