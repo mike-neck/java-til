@@ -24,6 +24,6 @@ public class BlockingImpl implements Blocking {
 
     @Override
     public String blockMono(final Mono<String> mono) {
-        return null;
+        return mono.block();
     }
 }
