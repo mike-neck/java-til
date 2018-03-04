@@ -16,10 +16,13 @@
 package com.example.lesson.api;
 
 import com.example.annotations.Lesson;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Lesson(10)
 public interface Blocking {
 
     String blockMono(Mono<String> mono);
+
+    Iterable<String> fluxToIterable(Flux<String> flux);
 }

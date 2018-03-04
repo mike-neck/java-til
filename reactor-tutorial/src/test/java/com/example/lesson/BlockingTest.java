@@ -20,6 +20,7 @@ import com.example.annotations.Lesson;
 import com.example.lesson.api.Blocking;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,5 +33,11 @@ class BlockingTest {
     void blockMono(final Blocking blocking) {
         final String string = blocking.blockMono(Mono.just("foo"));
         assertThat(string).isEqualTo("foo");
+    }
+
+    @Test
+    void fluxToIterable(final Blocking blocking) {
+        final Iterable<String> iterable = blocking.fluxToIterable(Flux.just("foo", "bar", "baz"));
+        assertThat(iterable).containsExactly("foo", "bar", "baz");
     }
 }

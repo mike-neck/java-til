@@ -17,7 +17,10 @@ package com.example.lesson;
 
 import com.example.annotations.Lesson;
 import com.example.lesson.api.Blocking;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Collections;
 
 @Lesson(10)
 public class BlockingImpl implements Blocking {
@@ -25,5 +28,10 @@ public class BlockingImpl implements Blocking {
     @Override
     public String blockMono(final Mono<String> mono) {
         return mono.block();
+    }
+
+    @Override
+    public Iterable<String> fluxToIterable(final Flux<String> flux) {
+        return Collections.emptySet();
     }
 }
