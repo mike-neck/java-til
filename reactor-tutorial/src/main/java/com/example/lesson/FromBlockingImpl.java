@@ -34,6 +34,6 @@ public class FromBlockingImpl implements FromBlocking {
 
     @Override
     public Mono<Void> fluxToBlockingConsumer(final Flux<String> flux, final BlockingWriter writer) {
-        return null;
+        return flux.publishOn(Schedulers.single()).doOnNext(writer::write).then();
     }
 }
