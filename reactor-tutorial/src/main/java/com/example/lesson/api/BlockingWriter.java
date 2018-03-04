@@ -15,16 +15,10 @@
  */
 package com.example.lesson.api;
 
-import com.example.annotations.Lesson;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+public interface BlockingWriter extends AutoCloseable {
 
-import java.io.BufferedReader;
+    void write(final String value);
 
-@Lesson(11)
-public interface FromBlocking {
-
-    Flux<String> fromBlockingToFluxWithScheduler(BufferedReader reader);
-
-    Mono<Void> fluxToBlockingConsumer(Flux<String> flux, BlockingWriter writer);
+    @Override
+    void close();
 }

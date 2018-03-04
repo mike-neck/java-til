@@ -16,8 +16,10 @@
 package com.example.lesson;
 
 import com.example.annotations.Lesson;
+import com.example.lesson.api.BlockingWriter;
 import com.example.lesson.api.FromBlocking;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.io.BufferedReader;
@@ -28,5 +30,10 @@ public class FromBlockingImpl implements FromBlocking {
     @Override
     public Flux<String> fromBlockingToFluxWithScheduler(final BufferedReader reader) {
         return Flux.defer(() -> Flux.fromStream(reader.lines())).subscribeOn(Schedulers.elastic());
+    }
+
+    @Override
+    public Mono<Void> fluxToBlockingConsumer(final Flux<String> flux, final BlockingWriter writer) {
+        return null;
     }
 }

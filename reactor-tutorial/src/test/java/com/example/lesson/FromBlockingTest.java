@@ -17,13 +17,19 @@ package com.example.lesson;
 
 import com.example.ParameterSupplier;
 import com.example.annotations.Lesson;
+import com.example.lesson.api.BlockingWriter;
 import com.example.lesson.api.FromBlocking;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.*;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ExtendWith({ParameterSupplier.class})
 @Lesson(11)
@@ -45,7 +51,7 @@ class FromBlockingTest {
 
     @Test
     void fromBlockingWithDeferSubscribeOnScheduler(final FromBlocking fromBlocking) throws IOException {
-        try(final BufferedReader reader = bufferedReader("from-blocking-test.txt")) {
+        try (final BufferedReader reader = bufferedReader("from-blocking-test.txt")) {
             final Flux<String> flux = fromBlocking.fromBlockingToFluxWithScheduler(reader);
             StepVerifier.create(flux)
                     .expectNext("foo")
@@ -53,5 +59,41 @@ class FromBlockingTest {
                     .expectNext("baz")
                     .verifyComplete();
         }
+    }
+
+    @Test
+    void toBlockingConsumerWithPublishOnScheduler(final FromBlocking fromBlocking) {
+        final Flux<String> flux = Flux.just("foo", "bar", "baz");
+        final BlockingWriterImpl writer = new BlockingWriterImpl();
+        final Flux<String> tester = Flux.create(writer::setSink);
+        final Mono<Void> mono = fromBlocking.fluxToBlockingConsumer(flux, writer);
+        mono.doOnTerminate(writer::close);
+        assertAll(
+                () -> StepVerifier.create(mono).verifyComplete(),
+                () -> StepVerifier.create(tester)
+                        .expectNext("foo")
+                        .expectNext("bar")
+                        .expectNext("baz")
+                        .verifyComplete()
+        );
+    }
+}
+
+class BlockingWriterImpl implements BlockingWriter {
+
+    private FluxSink<String> sink;
+
+    public void setSink(final FluxSink<String> sink) {
+        this.sink = sink;
+    }
+
+    @Override
+    public void write(final String value) {
+        Objects.requireNonNull(sink).next(value);
+    }
+
+    @Override
+    public void close() {
+        Objects.requireNonNull(sink).complete();
     }
 }
