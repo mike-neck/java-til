@@ -20,8 +20,6 @@ import com.example.lesson.api.Blocking;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
-
 @Lesson(10)
 public class BlockingImpl implements Blocking {
 
@@ -32,6 +30,6 @@ public class BlockingImpl implements Blocking {
 
     @Override
     public Iterable<String> fluxToIterable(final Flux<String> flux) {
-        return Collections.emptySet();
+        return flux.toIterable();
     }
 }
