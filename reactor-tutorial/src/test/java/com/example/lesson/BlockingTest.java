@@ -40,4 +40,11 @@ class BlockingTest {
         final Iterable<String> iterable = blocking.fluxToIterable(Flux.just("foo", "bar", "baz"));
         assertThat(iterable).containsExactly("foo", "bar", "baz");
     }
+
+    @Test
+    void fluxFirstElement(final Blocking blocking) {
+        final Flux<String> flux = Flux.just("foo", "bar", "baz");
+        final String firstElement = blocking.firstElement(flux);
+        assertThat(firstElement).isEqualTo("foo");
+    }
 }

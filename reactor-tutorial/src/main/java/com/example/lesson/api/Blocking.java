@@ -25,4 +25,6 @@ public interface Blocking {
     String blockMono(Mono<String> mono);
 
     Iterable<String> fluxToIterable(Flux<String> flux);
+
+    String firstElement(Flux<String> flux);
 }

@@ -32,4 +32,9 @@ public class BlockingImpl implements Blocking {
     public Iterable<String> fluxToIterable(final Flux<String> flux) {
         return flux.toIterable();
     }
+
+    @Override
+    public String firstElement(final Flux<String> flux) {
+        return "";
+    }
 }
