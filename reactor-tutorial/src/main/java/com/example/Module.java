@@ -34,5 +34,6 @@ public class Module extends AbstractModule {
         bind(ReactiveXAdapter.class).to(ReactiveXAdapterImpl.class);
         bind(Operations.class).to(OperationsImpl.class);
         bind(ToBlocking.class).to(ToBlockingImpl.class);
+        bind(FromBlocking.class).to(FromBlockingImpl.class);
     }
 }
