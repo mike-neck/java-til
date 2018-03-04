@@ -16,12 +16,12 @@
 package com.example.lesson;
 
 import com.example.annotations.Lesson;
-import com.example.lesson.api.Blocking;
+import com.example.lesson.api.ToBlocking;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Lesson(10)
-public class BlockingImpl implements Blocking {
+public class ToBlockingImpl implements ToBlocking {
 
     @Override
     public String blockMono(final Mono<String> mono) {

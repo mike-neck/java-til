@@ -33,6 +33,6 @@ public class Module extends AbstractModule {
         bind(ErrorHandle.class).to(ErrorHandleImpl.class);
         bind(ReactiveXAdapter.class).to(ReactiveXAdapterImpl.class);
         bind(Operations.class).to(OperationsImpl.class);
-        bind(Blocking.class).to(BlockingImpl.class);
+        bind(ToBlocking.class).to(ToBlockingImpl.class);
     }
 }

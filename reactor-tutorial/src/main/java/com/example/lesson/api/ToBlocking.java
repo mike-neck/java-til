@@ -20,7 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Lesson(10)
-public interface Blocking {
+public interface ToBlocking {
 
     String blockMono(Mono<String> mono);
 
