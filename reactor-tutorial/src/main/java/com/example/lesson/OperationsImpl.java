@@ -53,6 +53,6 @@ public class OperationsImpl implements Operations {
 
     @Override
     public Mono<String> returnBarWhenEmpty(final Mono<String> mono) {
-        return mono;
+        return mono.switchIfEmpty(Mono.just("bar"));
     }
 }
