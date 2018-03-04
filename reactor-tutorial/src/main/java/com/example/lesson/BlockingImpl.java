@@ -35,6 +35,6 @@ public class BlockingImpl implements Blocking {
 
     @Override
     public String firstElement(final Flux<String> flux) {
-        return "";
+        return flux.blockFirst();
     }
 }
