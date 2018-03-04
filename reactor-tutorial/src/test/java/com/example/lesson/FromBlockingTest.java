@@ -25,8 +25,6 @@ import reactor.test.StepVerifier;
 
 import java.io.*;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 @ExtendWith({ParameterSupplier.class})
 @Lesson(11)
 class FromBlockingTest {
@@ -49,10 +47,11 @@ class FromBlockingTest {
     void fromBlockingWithDeferSubscribeOnScheduler(final FromBlocking fromBlocking) throws IOException {
         try(final BufferedReader reader = bufferedReader("from-blocking-test.txt")) {
             final Flux<String> flux = fromBlocking.fromBlockingToFluxWithScheduler(reader);
-            assertThat(flux).isNotNull();
             StepVerifier.create(flux)
                     .expectNext("foo")
-                    .expectNext("bar", "baz");
+                    .expectNext("bar")
+                    .expectNext("baz")
+                    .verifyComplete();
         }
     }
 }
