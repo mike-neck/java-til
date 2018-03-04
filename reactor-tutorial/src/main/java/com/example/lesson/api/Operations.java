@@ -35,4 +35,6 @@ public interface Operations {
     Mono<Void> completeWithThen(Flux<Long> flux);
 
     Mono<String> nullAwareMono(@Nullable String foo);
+
+    Mono<String> returnBarWhenEmpty(Mono<String> mono);
 }

@@ -50,4 +50,9 @@ public class OperationsImpl implements Operations {
     public Mono<String> nullAwareMono(final String foo) {
         return Mono.justOrEmpty(foo);
     }
+
+    @Override
+    public Mono<String> returnBarWhenEmpty(final Mono<String> mono) {
+        return mono;
+    }
 }

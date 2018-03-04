@@ -97,4 +97,14 @@ class OperationTest {
                 () -> StepVerifier.create(secondMono.hasElement()).expectNext(false).verifyComplete()
         );
     }
+
+    @Test
+    void emptyThenBar(final Operations operations) {
+        final Mono<String> foo = operations.returnBarWhenEmpty(Mono.just("foo"));
+        final Mono<String> bar = operations.returnBarWhenEmpty(Mono.empty());
+        assertAll(
+                () -> StepVerifier.create(foo).expectNext("foo").verifyComplete(),
+                () -> StepVerifier.create(bar).expectNext("bar").verifyComplete()
+        );
+    }
 }
