@@ -31,6 +31,7 @@ public class DiscardServerMain {
         this.port = port;
     }
 
+    
     public void run() throws Exception {
         final NioEventLoopGroup bossGroup = new NioEventLoopGroup();//1
         final NioEventLoopGroup workerGroup = new NioEventLoopGroup();
