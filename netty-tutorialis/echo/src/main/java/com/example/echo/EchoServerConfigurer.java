@@ -15,11 +15,13 @@
  */
 package com.example.echo;
 
-import com.example.ServerMain;
+import com.example.ChannelInitializationConfigurer;
+import io.netty.channel.socket.SocketChannel;
 
-public class EchoServerMain {
+public class EchoServerConfigurer implements ChannelInitializationConfigurer {
 
-    public static void main(String[] args) throws Exception {
-        new ServerMain(8000).run();
+    @Override
+    public void configure(final SocketChannel socketChannel) {
+        socketChannel.pipeline().addLast(new EchoServerHandler());
     }
 }

@@ -41,7 +41,7 @@ public class ServerMain {
                     .childHandler(ChannelInitializationConfigurer.channelInitializer())
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
-            log.info("echo server start");
+            log.info("server start");
             final ChannelFuture channelFuture = bootstrap.bind(port).sync();
             channelFuture.channel().closeFuture().sync();
         }
