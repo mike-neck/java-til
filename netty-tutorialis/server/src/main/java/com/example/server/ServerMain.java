@@ -15,6 +15,7 @@
  */
 package com.example.server;
 
+import com.example.share.GracefulShutdown;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -38,7 +39,7 @@ public class ServerMain {
             final ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(parentGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(ChannelInitializationConfigurer.channelInitializer())
+                    .childHandler(ServerChannelInitializationConfigurer.channelInitializer())
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
             log.info("server start");
