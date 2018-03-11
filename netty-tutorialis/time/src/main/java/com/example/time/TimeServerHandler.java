@@ -15,7 +15,7 @@
  */
 package com.example.time;
 
-import com.example.server.Futures;
+import com.example.share.Futures;
 import com.example.server.ServerMain;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
