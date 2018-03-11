@@ -22,7 +22,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -41,7 +40,7 @@ public class TimeServerHandler extends ChannelInboundHandlerAdapter {
 
         final ByteBuf byteBuf = ctx.alloc().buffer(8);
         byteBuf.writeLong(epochSecond);
-        Mono.fromFuture(Futures.toCompletableFuture(ctx.writeAndFlush(byteBuf)))
+        Futures.toMono(ctx.writeAndFlush(byteBuf))
                 .subscribe(v -> ctx.close());
     }
 

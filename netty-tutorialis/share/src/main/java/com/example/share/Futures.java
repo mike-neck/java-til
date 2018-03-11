@@ -16,6 +16,8 @@
 package com.example.share;
 
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.MonoProcessor;
 
 import java.util.concurrent.*;
 
@@ -43,5 +45,23 @@ public final class Futures {
 
     public static <S> CompletableFuture<S> toCompletableFuture(final Future<? extends S> future) {
         return instance.completableFuture(future);
+    }
+
+    private <S> Mono<S> mono(final Future<? extends S> future) {
+        final MonoProcessor<S> processor = MonoProcessor.create();
+        executor.submit(() -> {
+            try {
+                final S stat = future.get();
+                processor.onNext(stat);
+                processor.onComplete();
+            } catch (InterruptedException | ExecutionException e) {
+                processor.onError(e);
+            }
+        });
+        return processor;
+    } 
+
+    public static <S> Mono<S> toMono(final Future<? extends S> future) {
+        return instance.mono(future);
     }
 }
