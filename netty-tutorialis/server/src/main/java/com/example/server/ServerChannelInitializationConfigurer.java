@@ -36,10 +36,11 @@ public interface ServerChannelInitializationConfigurer {
     }
 
     static ChannelInitializer<SocketChannel> channelInitializer() {
-        final Iterator<ServerChannelInitializationConfigurer> iterator = ServiceLoader.load(ServerChannelInitializationConfigurer.class).iterator();
+        final Iterator<ServerChannelInitializationConfigurer> iterator =
+                ServiceLoader.load(ServerChannelInitializationConfigurer.class).iterator();
         if (iterator.hasNext()) {
             return iterator.next().asInitializer();
         }
-        throw new NoSuchElementException("no ChannelInitializationConfigurer found.");
+        throw new NoSuchElementException("no ServerChannelInitializationConfigurer found.");
     }
 }
