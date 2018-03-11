@@ -25,6 +25,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(final ChannelHandlerContext ctx, final Object msg) {
+        log.info("message coming.");
         ((ByteBuf) msg).release();
     }
 
