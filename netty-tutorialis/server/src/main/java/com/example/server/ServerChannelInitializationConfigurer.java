@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
-public interface ChannelInitializationConfigurer {
+public interface ServerChannelInitializationConfigurer {
 
     void configure(final SocketChannel socketChannel) throws Exception;
 
@@ -36,7 +36,7 @@ public interface ChannelInitializationConfigurer {
     }
 
     static ChannelInitializer<SocketChannel> channelInitializer() {
-        final Iterator<ChannelInitializationConfigurer> iterator = ServiceLoader.load(ChannelInitializationConfigurer.class).iterator();
+        final Iterator<ServerChannelInitializationConfigurer> iterator = ServiceLoader.load(ServerChannelInitializationConfigurer.class).iterator();
         if (iterator.hasNext()) {
             return iterator.next().asInitializer();
         }

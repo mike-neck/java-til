@@ -15,10 +15,10 @@
  */
 package com.example.time;
 
-import com.example.server.ChannelInitializationConfigurer;
+import com.example.server.ServerChannelInitializationConfigurer;
 import io.netty.channel.socket.SocketChannel;
 
-public class TimeServerConfigurer implements ChannelInitializationConfigurer {
+public class TimeServerConfigurer implements ServerChannelInitializationConfigurer {
 
     @Override
     public void configure(final SocketChannel socketChannel) {

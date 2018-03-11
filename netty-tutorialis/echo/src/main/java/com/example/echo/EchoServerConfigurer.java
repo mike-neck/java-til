@@ -15,10 +15,10 @@
  */
 package com.example.echo;
 
-import com.example.server.ChannelInitializationConfigurer;
+import com.example.server.ServerChannelInitializationConfigurer;
 import io.netty.channel.socket.SocketChannel;
 
-public class EchoServerConfigurer implements ChannelInitializationConfigurer {
+public class EchoServerConfigurer implements ServerChannelInitializationConfigurer {
 
     @Override
     public void configure(final SocketChannel socketChannel) {
