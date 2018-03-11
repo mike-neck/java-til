@@ -24,9 +24,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 
 @Slf4j
 public class TimeServerHandler extends ChannelInboundHandlerAdapter {
@@ -35,10 +34,12 @@ public class TimeServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(final ChannelHandlerContext ctx) {
-        log.info("channel active");
+        final OffsetDateTime now = OffsetDateTime.now(zoneId);
+        final long epochSecond = now.toEpochSecond();
+
+        log.info("channel active: {}", now);
+
         final ByteBuf byteBuf = ctx.alloc().buffer(8);
-        final LocalDateTime now = LocalDateTime.now(zoneId);
-        final long epochSecond = now.toInstant(ZoneOffset.UTC).getEpochSecond();
         byteBuf.writeLong(epochSecond);
         Mono.fromFuture(Futures.toCompletableFuture(ctx.writeAndFlush(byteBuf)))
                 .subscribe(v -> ctx.close());
