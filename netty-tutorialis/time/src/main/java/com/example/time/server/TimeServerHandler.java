@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.time;
+package com.example.time.server;
 
-import com.example.share.Futures;
 import com.example.server.ServerMain;
+import com.example.share.Futures;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
