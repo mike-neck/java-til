@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.echo;
+package com.example.time;
 
-import com.example.server.ServerMain;
+import com.example.server.ChannelInitializationConfigurer;
+import io.netty.channel.socket.SocketChannel;
 
-public class EchoServerMain {
+public class TimeServerConfigurer implements ChannelInitializationConfigurer {
 
-    public static void main(String[] args) throws Exception {
-        new ServerMain(8000).run();
+    @Override
+    public void configure(final SocketChannel socketChannel) {
+        socketChannel.pipeline().addLast(new TimeServerHandler());
     }
 }

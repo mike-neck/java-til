@@ -15,7 +15,7 @@
  */
 package com.example.echo;
 
-import com.example.ChannelInitializationConfigurer;
+import com.example.server.ChannelInitializationConfigurer;
 import io.netty.channel.socket.SocketChannel;
 
 public class EchoServerConfigurer implements ChannelInitializationConfigurer {

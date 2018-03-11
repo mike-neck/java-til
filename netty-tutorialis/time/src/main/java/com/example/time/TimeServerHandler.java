@@ -15,7 +15,8 @@
  */
 package com.example.time;
 
-import com.example.Futures;
+import com.example.server.Futures;
+import com.example.server.ServerMain;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -25,7 +26,6 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Date;
 
 @Slf4j
 public class TimeServerHandler extends ChannelInboundHandlerAdapter {
@@ -49,11 +49,7 @@ public class TimeServerHandler extends ChannelInboundHandlerAdapter {
         ctx.close();
     }
 
-    public static void main(String[] args) {
-        final long time = System.currentTimeMillis() / 1000 + 2208988800L;
-        System.out.println(time);
-        final Date date = new Date(time);
-        System.out.println(date);
-        System.out.println(date.toInstant().atOffset(ZoneOffset.UTC));
+    public static void main(String[] args) throws InterruptedException {
+        new ServerMain(8000).run();
     }
 }
