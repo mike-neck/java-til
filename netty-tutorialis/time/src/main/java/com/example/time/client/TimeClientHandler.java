@@ -15,7 +15,9 @@
  */
 package com.example.time.client;
 
+import com.example.client.ClientMain;
 import com.example.share.GracefulShutdown;
+import com.example.time.TimeServerPort;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -43,5 +45,9 @@ public class TimeClientHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
         log.warn("exception occurred in channelRead", cause);
         ctx.close();
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        new ClientMain("localhost", TimeServerPort.port()).run();
     }
 }
