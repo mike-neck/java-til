@@ -17,7 +17,7 @@ package com.example.time.server;
 
 import com.example.server.ServerMain;
 import com.example.share.Futures;
-import com.example.time.TimeServerPort;
+import com.example.share.TimeServerPort;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

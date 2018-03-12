@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.time.client;
+package com.example.time1.client;
 
 import com.example.client.ClientMain;
-import com.example.share.GracefulShutdown;
 import com.example.share.TimeServerPort;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,12 +27,27 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 @Slf4j
-public class TimeClientHandler extends ChannelInboundHandlerAdapter {
+public class FragmentedTimeClientHandler extends ChannelInboundHandlerAdapter {
+
+    private ByteBuf byteBuf;
 
     @Override
-    public void channelRead(final ChannelHandlerContext ctx, final Object msg) {
-        final ByteBuf byteBuf = (ByteBuf) msg;
-        try (final GracefulShutdown ignored = GracefulShutdown.gracefulShutdown(byteBuf::release)) {
+    public void handlerAdded(final ChannelHandlerContext ctx) throws Exception {
+        this.byteBuf = ctx.alloc().buffer(4);
+    }
+
+    @Override
+    public void handlerRemoved(final ChannelHandlerContext ctx) throws Exception {
+        byteBuf.release();
+        byteBuf = null;
+    }
+
+    @Override
+    public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
+        final ByteBuf buf = (ByteBuf) msg;
+        byteBuf.writeBytes(buf);
+        buf.release();
+        if (byteBuf.readableBytes() >= 8) {
             final long epochSeconds = byteBuf.readLong();
             final OffsetDateTime serverTime = Instant.ofEpochSecond(epochSeconds).atOffset(ZoneOffset.UTC);
             log.info("server time: {}", serverTime);
@@ -42,7 +56,7 @@ public class TimeClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) {
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
         log.warn("exception occurred in channelRead", cause);
         ctx.close();
     }
