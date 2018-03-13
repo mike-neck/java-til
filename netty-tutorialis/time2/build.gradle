@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    implementation rootProject.project('server')
+
+    implementation 'io.netty:netty-all:4.1.22.Final'
+
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    runtimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+    implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.1.5.RELEASE'
+
+    implementation group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
+
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.4'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.0'
+}
