@@ -15,6 +15,7 @@
  */
 package com.example.client;
 
+import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
@@ -25,6 +26,8 @@ import java.util.ServiceLoader;
 public interface ClientChannelInitializerConfigurer {
 
     void configure(final SocketChannel socketChannel) throws Exception;
+
+    ChannelHandlerAdapter handlerAdapter();
 
     default ChannelInitializer<SocketChannel> asInitializer() {
         return new ChannelInitializer<SocketChannel>() {
