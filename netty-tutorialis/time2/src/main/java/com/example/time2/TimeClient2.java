@@ -16,6 +16,7 @@
 package com.example.time2;
 
 import com.example.client.ClientChannelInitializerConfigurer;
+import com.example.client.ClientMain;
 import io.netty.channel.ChannelHandlerAdapter;
 
 public final class TimeClient2 {
@@ -34,5 +35,7 @@ public final class TimeClient2 {
         }
     }
 
-    
+    public static void main(String[] args) throws InterruptedException {
+        ClientMain.builder().host("localhost").port(8000).build().run();
+    }
 }
