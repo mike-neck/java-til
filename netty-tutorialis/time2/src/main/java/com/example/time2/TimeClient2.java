@@ -18,7 +18,7 @@ package com.example.time2;
 import com.example.client.ClientChannelInitializerConfigurer;
 import io.netty.channel.ChannelHandlerAdapter;
 
-public final class ChannelConfigurers {
+public final class TimeClient2 {
 
     public static class DecoderConfigurer implements ClientChannelInitializerConfigurer {
         @Override

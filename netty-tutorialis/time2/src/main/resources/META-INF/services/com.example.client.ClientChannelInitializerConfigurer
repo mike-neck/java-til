@@ -1,2 +1,2 @@
-com.example.time2.ChannelConfigurers$DecoderConfigurer
-com.example.time2.ChannelConfigurers$LoggingTimeHandlerConfigurer
+com.example.time2.TimeClient2$DecoderConfigurer
+com.example.time2.TimeClient2$LoggingTimeHandlerConfigurer
