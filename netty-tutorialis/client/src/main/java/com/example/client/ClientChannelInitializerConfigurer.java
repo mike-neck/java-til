@@ -26,18 +26,7 @@ import java.util.ServiceLoader;
 
 public interface ClientChannelInitializerConfigurer {
 
-    void configure(final SocketChannel socketChannel) throws Exception;
-
     ChannelHandlerAdapter handlerAdapter();
-
-    default ChannelInitializer<SocketChannel> asInitializer() {
-        return new ChannelInitializer<SocketChannel>() {
-            @Override
-            protected void initChannel(final SocketChannel ch) throws Exception {
-                configure(ch);
-            }
-        };
-    }
 
     static ChannelInitializer<SocketChannel> applyConfigurer(final Iterable<ClientChannelInitializerConfigurer> configurers) {
         final ImmutableList<ClientChannelInitializerConfigurer> list = Lists.immutable.ofAll(configurers);

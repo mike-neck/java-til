@@ -17,14 +17,8 @@ package com.example.time.client;
 
 import com.example.client.ClientChannelInitializerConfigurer;
 import io.netty.channel.ChannelHandlerAdapter;
-import io.netty.channel.socket.SocketChannel;
 
 public class TimeClientConfigurer implements ClientChannelInitializerConfigurer {
-
-    @Override
-    public void configure(final SocketChannel socketChannel) {
-        socketChannel.pipeline().addLast(handlerAdapter());
-    }
 
     @Override
     public ChannelHandlerAdapter handlerAdapter() {
