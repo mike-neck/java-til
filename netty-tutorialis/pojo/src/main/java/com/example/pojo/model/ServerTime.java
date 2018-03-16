@@ -31,6 +31,10 @@ public class ServerTime {
         this.value = now.toEpochSecond();
     }
 
+    public long getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return Instant.ofEpochSecond(value).atOffset(ZoneOffset.UTC).toString();
