@@ -18,12 +18,18 @@ package com.example.pojo.model;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 @RequiredArgsConstructor
 public class ServerTime {
 
     private final long value;
+
+    public ServerTime(final ZoneOffset offset) {
+        final OffsetDateTime now = OffsetDateTime.now(offset);
+        this.value = now.toEpochSecond();
+    }
 
     @Override
     public String toString() {
