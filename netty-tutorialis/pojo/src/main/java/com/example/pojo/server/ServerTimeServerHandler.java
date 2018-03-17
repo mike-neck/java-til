@@ -35,4 +35,5 @@ public class ServerTimeServerHandler extends ChannelInboundHandlerAdapter {
         final ChannelFuture channelFuture = ctx.writeAndFlush(serverTime);
         channelFuture.addListener((GenericFutureListener<ChannelFuture>) future -> future.channel().close());
     }
+
 }
