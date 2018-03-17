@@ -25,7 +25,7 @@ public class ClientApp {
         new ClientMain("localhost", 8000).run();
     }
     
-    public static class ClientHandlerConfigurer implements ClientChannelInitializerConfigurer {
+    public static class ClientHandler implements ClientChannelInitializerConfigurer {
         @Override
         public ChannelHandlerAdapter handlerAdapter() {
             return new ServerTimeClientHandler();

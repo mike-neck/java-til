@@ -1,2 +1,2 @@
 com.example.pojo.client.ClientApp$ClientDecoder
-com.example.pojo.client.ClientApp$ClientHandlerConfigurer
+com.example.pojo.client.ClientApp$ClientHandler
