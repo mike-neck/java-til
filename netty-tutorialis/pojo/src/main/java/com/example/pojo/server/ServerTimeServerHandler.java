@@ -19,7 +19,6 @@ import com.example.pojo.model.ServerTime;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZoneOffset;
@@ -32,8 +31,12 @@ public class ServerTimeServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(final ChannelHandlerContext ctx) {
         final ServerTime serverTime = new ServerTime(offset);
+        log.info("channel active: {}", serverTime);
         final ChannelFuture channelFuture = ctx.writeAndFlush(serverTime);
-        channelFuture.addListener((GenericFutureListener<ChannelFuture>) future -> future.channel().close());
+        channelFuture.addListener((ChannelFuture future) -> {
+            log.info("close channel.");
+            future.channel().closeFuture();
+        });
     }
 
 }

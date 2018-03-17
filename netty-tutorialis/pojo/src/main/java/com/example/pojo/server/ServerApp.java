@@ -18,7 +18,9 @@ package com.example.pojo.server;
 import com.example.server.ServerChannelInitializationConfigurer;
 import com.example.server.ServerMain;
 import io.netty.channel.ChannelHandler;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ServerApp {
 
     public static void main(String[] args) throws InterruptedException {
@@ -29,6 +31,7 @@ public class ServerApp {
 
         @Override
         public ChannelHandler channelHandler() {
+            log.info("server time encoder");
             return new ServerTimeEncoder();
         }
     }
@@ -37,6 +40,7 @@ public class ServerApp {
 
         @Override
         public ChannelHandler channelHandler() {
+            log.info("server time server handler");
             return new ServerTimeServerHandler();
         }
     }

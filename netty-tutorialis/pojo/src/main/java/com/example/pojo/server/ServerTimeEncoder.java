@@ -18,17 +18,15 @@ package com.example.pojo.server;
 import com.example.pojo.model.ServerTime;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelOutboundHandlerAdapter;
-import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.MessageToByteEncoder;
+import lombok.extern.slf4j.Slf4j;
 
-public class ServerTimeEncoder extends ChannelOutboundHandlerAdapter {
+@Slf4j
+public class ServerTimeEncoder extends MessageToByteEncoder<ServerTime> {
 
     @Override
-    public void write(final ChannelHandlerContext ctx, final Object msg, final ChannelPromise promise) {
-        final ServerTime serverTime = (ServerTime) msg;
-        final ByteBuf byteBuf = ctx.alloc().buffer(8);
-        byteBuf.writeLong(serverTime.getValue());
-        ctx.write(byteBuf, promise);
+    protected void encode(final ChannelHandlerContext ctx, final ServerTime msg, final ByteBuf out) {
+        log.info("encoding: {}", msg);
+        out.writeLong(msg.getValue());
     }
-
 }

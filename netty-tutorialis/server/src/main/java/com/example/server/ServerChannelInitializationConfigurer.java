@@ -20,6 +20,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ServiceLoader;
 
@@ -28,7 +30,9 @@ public interface ServerChannelInitializationConfigurer {
     ChannelHandler channelHandler();
 
     static ChannelInitializer<SocketChannel> applyConfigurer(final Iterable<ServerChannelInitializationConfigurer> configurers) {
+        final Logger log = LoggerFactory.getLogger(ServerChannelInitializationConfigurer.class);
         final ImmutableList<ServerChannelInitializationConfigurer> list = Lists.immutable.ofAll(configurers);
+        log.info("configurers: {}", list);
         return new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(final SocketChannel ch) {
