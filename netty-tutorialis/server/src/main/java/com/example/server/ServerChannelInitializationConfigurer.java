@@ -15,32 +15,30 @@
  */
 package com.example.server;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Lists;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 
 public interface ServerChannelInitializationConfigurer {
 
-    void configure(final SocketChannel socketChannel) throws Exception;
+    ChannelHandler channelHandler();
 
-    default ChannelInitializer<SocketChannel> asInitializer() {
+    static ChannelInitializer<SocketChannel> applyConfigurer(final Iterable<ServerChannelInitializationConfigurer> configurers) {
+        final ImmutableList<ServerChannelInitializationConfigurer> list = Lists.immutable.ofAll(configurers);
         return new ChannelInitializer<SocketChannel>() {
             @Override
-            protected void initChannel(final SocketChannel ch) throws Exception {
-                configure(ch);
+            protected void initChannel(final SocketChannel ch) {
+                list.injectInto(ch.pipeline(), (pip, config) -> pip.addLast(config.channelHandler()));
             }
         };
     }
 
     static ChannelInitializer<SocketChannel> channelInitializer() {
-        final Iterator<ServerChannelInitializationConfigurer> iterator =
-                ServiceLoader.load(ServerChannelInitializationConfigurer.class).iterator();
-        if (iterator.hasNext()) {
-            return iterator.next().asInitializer();
-        }
-        throw new NoSuchElementException("no ServerChannelInitializationConfigurer found.");
+        final ServiceLoader<ServerChannelInitializationConfigurer> configurers = ServiceLoader.load(ServerChannelInitializationConfigurer.class);
+        return applyConfigurer(configurers);
     }
 }

@@ -16,12 +16,13 @@
 package com.example.time.server;
 
 import com.example.server.ServerChannelInitializationConfigurer;
-import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.ChannelHandlerAdapter;
 
 public class TimeServerConfigurer implements ServerChannelInitializationConfigurer {
 
     @Override
-    public void configure(final SocketChannel socketChannel) {
-        socketChannel.pipeline().addLast(new TimeServerHandler());
+    public ChannelHandlerAdapter channelHandler() {
+        return new TimeServerHandler();
     }
+
 }

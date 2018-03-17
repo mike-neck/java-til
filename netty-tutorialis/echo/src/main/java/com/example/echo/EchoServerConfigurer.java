@@ -16,12 +16,13 @@
 package com.example.echo;
 
 import com.example.server.ServerChannelInitializationConfigurer;
-import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.ChannelHandler;
 
 public class EchoServerConfigurer implements ServerChannelInitializationConfigurer {
 
     @Override
-    public void configure(final SocketChannel socketChannel) {
-        socketChannel.pipeline().addLast(new EchoServerHandler());
+    public ChannelHandler channelHandler() {
+        return new EchoServerHandler();
     }
+
 }
