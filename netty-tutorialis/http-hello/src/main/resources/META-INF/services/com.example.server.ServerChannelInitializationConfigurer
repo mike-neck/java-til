@@ -1,0 +1,2 @@
+com.example.http.hello.HttpServerChannelInitializerConfigurer$HttpServerCodecConfig
+com.example.http.hello.HttpServerChannelInitializerConfigurer$HttpServerHandler
