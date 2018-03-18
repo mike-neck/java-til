@@ -36,4 +36,24 @@ class TypeConversion {
         final long decoded = ByteBuffer.wrap(bytes).getLong();
         log.info("decoded: {}", decoded);
     }
+
+    @Test
+    void byteArrayToLong() {
+        final long expected = 0x1122_1133_11ee_11ffL;
+        final byte[] first = {0x11, 0x22, 0x11, 0x33};
+        final byte[] second = {0x11, (byte) 0xee, 0x11, (byte) 0xff};
+
+        final ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
+        log.info("current byteBuffer: position: {}/ limit: {}", byteBuffer.position(), byteBuffer.limit());
+        byteBuffer.put(first);
+        log.info("current byteBuffer: position: {}/ limit: {}", byteBuffer.position(), byteBuffer.limit());
+        byteBuffer.put(second);
+        log.info("current byteBuffer: position: {}/ limit: {}", byteBuffer.position(), byteBuffer.limit());
+
+        byteBuffer.flip();
+        log.info("current byteBuffer: position: {}/ limit: {}", byteBuffer.position(), byteBuffer.limit());
+        final long actual = byteBuffer.getLong();
+        log.info("current byteBuffer: position: {}/ limit: {}", byteBuffer.position(), byteBuffer.limit());
+        log.info("expected: {}, actual: {}", expected, actual);
+    }
 }
