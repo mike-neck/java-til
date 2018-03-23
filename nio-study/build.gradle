@@ -8,6 +8,8 @@ dependencies {
 
     implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.1.5.RELEASE'
 
+    implementation group: 'org.eclipse.collections', name: 'eclipse-collections', version: '9.1.0'
+
     implementation group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
 
