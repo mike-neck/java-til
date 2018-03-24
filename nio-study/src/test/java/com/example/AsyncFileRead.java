@@ -15,13 +15,16 @@
  */
 package com.example;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.collections.api.ByteIterable;
 import org.eclipse.collections.api.list.primitive.MutableByteList;
+import org.eclipse.collections.api.tuple.Pair;
 import org.eclipse.collections.impl.factory.primitive.ByteLists;
+import org.eclipse.collections.impl.tuple.Tuples;
 import org.junit.jupiter.api.Test;
-import reactor.core.publisher.ConnectableFlux;
-import reactor.core.publisher.EmitterProcessor;
+import reactor.core.publisher.*;
+import reactor.util.function.Tuple2;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -34,6 +37,8 @@ import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Slf4j
 class AsyncFileRead {
@@ -109,5 +114,80 @@ class AsyncFileRead {
         executor.shutdown();
         subLoop.shutdown();
         log.info("application finish");
+    }
+
+    @RequiredArgsConstructor
+    static class OrderedBytes {
+        final int order;
+        final byte[] bytes;
+    }
+
+    static class FluxController implements Consumer<FluxSink<Pair<Integer, ByteBuffer>>> {
+
+        @Override
+        public void accept(final FluxSink<Pair<Integer, ByteBuffer>> pairFluxSink) {
+
+        }
+    }
+
+    @Test
+    void withCreate() throws IOException, InterruptedException {
+        final ExecutorService mainLoop = Executors.newFixedThreadPool(1);
+        final ExecutorService subLoop = Executors.newFixedThreadPool(4);
+
+        final Path filePath = Paths.get("sample", "file.txt");
+        if (!Files.exists(filePath)) {
+            log.info("file not found: {}", filePath);
+            return;
+        }
+
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        final long size = Files.size(filePath);
+        final int bufferSize = 4;
+
+        try (final AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(filePath, Set.of(StandardOpenOption.READ), mainLoop)) {
+            final Flux<Mono<Pair<Integer, ByteBuffer>>> flux = Flux.create(emitter -> {
+                log.info("file read start: size: {}", size);
+                final CountDownLatch innerLatch = new CountDownLatch(1);
+                for (long position = 0; position < size; position += bufferSize) {
+                    final long pos = position;
+                    final ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
+                    final Future<Integer> future = fileChannel.read(byteBuffer, pos);
+                    final CompletableFuture<Pair<Integer, ByteBuffer>> completableFuture = CompletableFuture.supplyAsync(() -> {
+                        try {
+                            final Integer readBytes = future.get();
+                            log.info("read: {}, position: {}", readBytes, pos);
+                            if (size <= readBytes + pos) {
+                                innerLatch.countDown();
+                            }
+                            return Tuples.pair(readBytes, byteBuffer);
+                        } catch (InterruptedException | ExecutionException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }, subLoop);
+                    emitter.next(Mono.fromFuture(completableFuture));
+                }
+                try {
+                    innerLatch.await();
+                    emitter.complete();
+                } catch (InterruptedException e) {
+                    emitter.error(e);
+                }
+            });
+
+            final Mono<String> result = flux.doOnComplete(latch::countDown)
+                    .log()
+                    .flatMap(Function.identity())
+                    .map(Pair::getTwo)
+                    .map(ByteBuffer::array)
+                    .map(ByteLists.immutable::of)
+                    .map(bytes -> bytes.select(it -> it != (byte)0))
+                    .reduceWith(ByteLists.mutable::empty, MutableByteList::withAll)
+                    .map(ByteIterable::toArray)
+                    .map(bytes -> new String(bytes, StandardCharsets.UTF_8));
+            result.subscribe(text -> log.info("result:\n{}", text));
+            latch.await();
+        }
     }
 }
