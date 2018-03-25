@@ -20,15 +20,26 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 public class HttpHelloServerHandler extends ChannelInboundHandlerAdapter {
 
     private static final byte[] CONTENT = "Hello  ✌( ・ㅂ・)و🍺".getBytes(StandardCharsets.UTF_8);
 
+    private final AtomicInteger counter = new AtomicInteger(0);
+
+    private final Object hasher = new Object();
+
+    private int current = 0;
+
     @Override
     public void channelRead(final ChannelHandlerContext ctx, final Object msg) {
+        log.info("request coming[{}, hash: {}]: {}", current, hasher.hashCode(), msg);
+        current = counter.incrementAndGet();
         if (msg instanceof HttpRequest) {
             final HttpRequest request = (HttpRequest) msg;
             if (HttpUtil.is100ContinueExpected(request)) {
@@ -52,6 +63,7 @@ public class HttpHelloServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelReadComplete(final ChannelHandlerContext ctx) {
+        log.info("complete[{}, hash: {}]", current, hasher.hashCode());
         ctx.flush();
     }
 

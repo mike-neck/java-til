@@ -36,6 +36,7 @@ public interface ServerChannelInitializationConfigurer {
         return new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(final SocketChannel ch) {
+                log.info("initialize: {}", list);
                 list.injectInto(ch.pipeline(), (pip, config) -> pip.addLast(config.channelHandler()));
             }
         };
