@@ -32,18 +32,22 @@ class MachineTest {
             assertEquals("10_0", machine.toString());
         }
 
-        @Test
-        void add10() {
-            final Machine actual = machine.add(10);
+        @Nested
+        class Add {
 
-            assertEquals("10_20", actual.toString());
-        }
+            @Test
+            void add10() {
+                final Machine actual = machine.add(10);
 
-        @Test
-        void add0() {
-            final Machine actual = machine.add(0);
+                assertEquals("10_20", actual.toString());
+            }
 
-            assertEquals("10_10", actual.toString());
+            @Test
+            void add0() {
+                final Machine actual = machine.add(0);
+
+                assertEquals("10_10", actual.toString());
+            }
         }
     }
 
@@ -52,18 +56,22 @@ class MachineTest {
 
         private final Machine machine = Machine.of(0, 0);
 
-        @Test
-        void add10() {
-            final Machine actual = machine.add(10);
+        @Nested
+        class Add {
 
-            assertEquals("0_10", actual.toString());
-        }
+            @Test
+            void add10() {
+                final Machine actual = machine.add(10);
 
-        @Test
-        void add0() {
-            final Machine actual = machine.add(0);
+                assertEquals("0_10", actual.toString());
+            }
 
-            assertEquals("0_0", actual.toString());
+            @Test
+            void add0() {
+                final Machine actual = machine.add(0);
+
+                assertEquals("0_0", actual.toString());
+            }
         }
     }
 }
