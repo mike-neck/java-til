@@ -33,6 +33,10 @@ public class Machine {
         return new Machine(left, left + variable);
     }
 
+    Machine sub(int variable) {
+        return new Machine(left, left - variable);
+    }
+
     @Override
     public String toString() {
         return String.format("%d_%d", left, right);

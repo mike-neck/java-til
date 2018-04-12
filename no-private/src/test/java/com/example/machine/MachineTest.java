@@ -49,6 +49,24 @@ class MachineTest {
                 assertEquals("10_10", actual.toString());
             }
         }
+
+        @Nested
+        class Sub {
+
+            @Test
+            void sub10() {
+                final Machine actual = machine.sub(10);
+
+                assertEquals("10_0", actual.toString());
+            }
+
+            @Test
+            void sub0() {
+                final Machine actual = machine.sub(0);
+
+                assertEquals("10_10", actual.toString());
+            }
+        }
     }
 
     @Nested
@@ -71,6 +89,17 @@ class MachineTest {
                 final Machine actual = machine.add(0);
 
                 assertEquals("0_0", actual.toString());
+            }
+        }
+
+        @Nested
+        class Sub {
+
+            @Test
+            void sub10() {
+                final Machine actual = machine.sub(10);
+
+                assertEquals("0_-10", actual.toString());
             }
         }
     }
