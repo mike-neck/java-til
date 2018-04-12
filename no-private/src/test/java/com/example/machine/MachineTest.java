@@ -70,9 +70,9 @@ class MachineTest {
     }
 
     @Nested
-    class Left0Right0 {
+    class Left0Right10 {
 
-        private final Machine machine = Machine.of(0, 0);
+        private final Machine machine = Machine.of(0, 10);
 
         @Nested
         class Add {
