@@ -41,4 +41,18 @@ public class Machine {
     public String toString() {
         return String.format("%d_%d", left, right);
     }
+
+    Setter set(int variable) {
+        if (variable == 1) {
+            return newValue -> new Machine(newValue, right);
+        } else if (variable == 2) {
+            return newValue -> new Machine(left, newValue);
+        } else {
+            throw new IllegalArgumentException(String.format("the variable(%d) is invalid.", variable));
+        }
+    }
+
+    interface Setter {
+        Machine apply(int newValue);
+    }
 }

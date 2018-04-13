@@ -67,6 +67,26 @@ class MachineTest {
                 assertEquals("10_10", actual.toString());
             }
         }
+
+        @Nested
+        class Set1 {
+
+            private final Machine.Setter machine1Setter = machine.set(1);
+
+            @Test
+            void apply20() {
+                final Machine actual = machine1Setter.apply(20);
+
+                assertEquals("20_0", actual.toString());
+            }
+
+            @Test
+            void apply0() {
+                final Machine actual = machine1Setter.apply(0);
+
+                assertEquals("0_0", actual.toString());
+            }
+        }
     }
 
     @Nested
