@@ -21,10 +21,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 class ReactorExperiment {
@@ -56,6 +59,15 @@ class ReactorExperiment {
             public String apply(String s) {
                 throw new RuntimeException(String.format("failure: %s", s));
             }
+        };
+        private static final Random random = new Random();
+
+        static Result random() {
+            final int index = random.nextInt(2);
+            return Arrays.stream(values())
+                    .filter(it -> it.ordinal() == index)
+                    .findAny()
+                    .orElseThrow(IllegalStateException::new);
         }
     }
 
@@ -92,10 +104,30 @@ class ReactorExperiment {
 
     private CompletableFuture<String> firstFuture() {
         return CompletableFuture.supplyAsync(() -> {
-                sleep();
-                System.out.println("start");
-                return "FOO";
-            }, executor);
+            sleep();
+            System.out.println("start");
+            return "FOO";
+        }, executor);
+    }
+
+    static <R> OnSuccess<R> handle(final R result, final Throwable error) {
+        if (error == null && result != null) {
+            return successConsumer -> errorConsumer -> successConsumer.accept(result);
+        } else if (error != null) {
+            return successConsumer -> errorConsumer -> errorConsumer.accept(error);
+        } else {
+            final IllegalStateException exception =
+                    new IllegalStateException("not success but not error");
+            return successConsumer -> errorConsumer -> errorConsumer.accept(exception);
+        }
+    }
+
+    interface OnSuccess<R> {
+        OnError onSuccess(Consumer<? super R> successConsumer);
+    }
+
+    interface OnError {
+        void onError(final Consumer<? super Throwable> errorConsumer);
     }
 
     @Test
@@ -121,5 +153,90 @@ class ReactorExperiment {
                 .doOnCancel(latch::countDown)
                 .subscribe(System.out::println);
         latch.await();
+    }
+
+    @Test
+    void handlers1() throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            sleep();
+            return Result.random().apply("foo");
+        }, executor);
+
+        final CompletableFuture<String> hf1 = future.whenCompleteAsync((str, th) -> handle(str, th)
+                .onSuccess(s -> System.out.println(String.format("handler 1 -> %s", s)))
+                .onError(e -> System.out.println(String.format("handler 1 error -> %s", e.getClass().getSimpleName())
+                )), executor);
+        final CompletableFuture<String> hf2 = future.whenCompleteAsync((str, th) -> handle(str, th)
+                .onSuccess(s -> System.out.println(String.format("handler 2 -> %s", s)))
+                .onError(e -> System.out.println(String.format("handler 2 error -> %s", e.getClass().getSimpleName())
+                )), executor);
+
+        CompletableFuture.allOf(hf1, hf2).whenComplete((s, t) -> latch.countDown());
+        latch.await();
+    }
+
+    @Test
+    void handlers2() throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch finalLatch = new CountDownLatch(1);
+        final CompletableFuture<String> future =
+                CompletableFuture.supplyAsync(
+                        () -> {
+                            sleep();
+                            return Result.random().apply("foo");
+                        },
+                        executor);
+
+        final CompletableFuture<String> f1 =
+                future.thenApplyAsync(str -> String.format("result -> %s", str));
+        final CompletableFuture<String> f2 =
+                future.thenApplyAsync(
+                        str -> {
+                            throw new RuntimeException(str);
+                        });
+
+        final CompletableFuture<String> hf1 =
+                f1.whenCompleteAsync(
+                        (str, th) ->
+                                handle(str, th)
+                                        .onSuccess(s -> System.out.println(String.format("handler 1 -> %s", s)))
+                                        .onError(
+                                                e ->
+                                                        System.out.println(
+                                                                String.format(
+                                                                        "handler 1 error -> %s", e.getClass().getSimpleName()))),
+                        executor);
+        final CompletableFuture<String> hf2 =
+                f2.whenCompleteAsync(
+                        (str, th) ->
+                                handle(str, th)
+                                        .onSuccess(s -> System.out.println(String.format("handler 2 -> %s", s)))
+                                        .onError(
+                                                e ->
+                                                        System.out.println(
+                                                                String.format(
+                                                                        "handler 2 error -> %s", e.getClass().getSimpleName()))),
+                        executor);
+
+        CompletableFuture.allOf(hf1, hf2).whenComplete((s, t) -> latch.countDown());
+        latch.await();
+
+        final CompletableFuture<String> f3 =
+                future.thenApplyAsync(str -> String.format("after completed: %s", str));
+        final CompletableFuture<String> hf3 =
+                f3.whenCompleteAsync(
+                        (str, th) ->
+                                handle(str, th)
+                                        .onSuccess(s -> System.out.println(String.format("handler 3 -> %s", s)))
+                                        .onError(
+                                                e ->
+                                                        System.out.println(
+                                                                String.format(
+                                                                        "handler 3 error -> %s", e.getClass().getSimpleName()))),
+                        executor);
+
+        hf3.whenCompleteAsync((s, t) -> finalLatch.countDown());
+        finalLatch.await();
     }
 }
