@@ -1,0 +1,14 @@
+plugins {
+  id 'java'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.mongodb', name: 'mongodb-driver-async', version: '3.8.0'
+    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+    compile group: 'io.projectreactor', name: 'reactor-core', version: '3.1.8.RELEASE'
+}
+
