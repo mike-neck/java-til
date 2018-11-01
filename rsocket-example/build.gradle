@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.sherter.google-java-format' version '0.7.1'
+}
+
+
+dependencies {
+    implementation 'io.rsocket:rsocket-core:0.11.5'
+    implementation 'io.rsocket:rsocket-transport-netty:0.11.5'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+}
+
+repositories {
+    jcenter()
+}
+
+[tasks.googleJavaFormat, tasks.verifyGoogleJavaFormat]*.group = 'formatter'
