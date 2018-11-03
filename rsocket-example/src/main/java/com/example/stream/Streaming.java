@@ -51,8 +51,9 @@ public class Streaming {
 
   private static Function<Payload, String> showDataAndMetadata =
       payload ->
-          String.format("(%d) data: %s, metadata: %s", payload.refCnt(), payload.getDataUtf8(),
-                  payload.getMetadataUtf8());
+          String.format(
+              "(%d) data: %s, metadata: %s",
+              payload.refCnt(), payload.getDataUtf8(), payload.getMetadataUtf8());
 
   public static void main(String[] args) throws InterruptedException {
     final Disposable server = startServer().subscribe();
