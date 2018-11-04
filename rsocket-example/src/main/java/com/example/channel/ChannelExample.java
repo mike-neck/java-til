@@ -15,13 +15,10 @@
  */
 package com.example.channel;
 
-import io.rsocket.Payload;
-import io.rsocket.RSocket;
-import java.net.InetSocketAddress;
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 public class ChannelExample {
 
@@ -29,19 +26,13 @@ public class ChannelExample {
     final CountDownLatch latch = new CountDownLatch(1);
     final Disposable serverDisposable = Server.start().subscribe();
 
-    final Client client = new Client(250L, 4, 400L, 10);
-    final Mono<RSocket> mono = Client.newClient(new InetSocketAddress("localhost", 7000));
-
     final Disposable clientDisposable =
-        mono.flux()
-            .flatMap(
-                rsocket -> {
-                  final Flux<Long> clients = client.createClientStream();
-                  final Flux<Payload> payloads = clients.flatMap(client::request);
-                  return rsocket.requestChannel(payloads);
-                })
+        Flux.interval(Duration.ofMillis(125L))
+            .take(6L)
+            .map(clientId -> new Client(clientId, 300L, 20))
+            .flatMap(Client::runApplication)
             .doOnTerminate(latch::countDown)
-            .subscribe(client::showPayload);
+            .subscribe(Client::showPayload);
 
     latch.await();
 

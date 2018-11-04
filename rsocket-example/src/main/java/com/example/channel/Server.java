@@ -19,6 +19,8 @@ import io.rsocket.*;
 import io.rsocket.transport.netty.server.NettyContextCloseable;
 import io.rsocket.transport.netty.server.TcpServerTransport;
 import io.rsocket.util.DefaultPayload;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -69,7 +71,8 @@ public class Server extends AbstractRSocket {
         .map(
             payload ->
                 DefaultPayload.create(
-                    String.format("Echo: %s", payload.getDataUtf8()), payload.getMetadataUtf8()));
+                    DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
+                    payload.getMetadataUtf8()));
   }
 
   static Mono<NettyContextCloseable> start() {

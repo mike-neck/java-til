@@ -22,7 +22,6 @@ import io.rsocket.transport.netty.client.TcpClientTransport;
 import io.rsocket.util.DefaultPayload;
 import java.net.InetSocketAddress;
 import java.time.Duration;
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -32,35 +31,35 @@ class Client {
 
   private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
-  private final long clientInterval;
-  private final int clientSize;
+  private final long clientId;
   private final long messageInterval;
   private final int messageCount;
+  private final Mono<RSocket> client;
 
-  Client(long clientInterval, int clientSize, long messageInterval, int messageCount) {
-    this.clientInterval = clientInterval;
-    this.clientSize = clientSize;
+  Client(long clientId, long messageInterval, int messageCount) {
+    this.clientId = clientId;
     this.messageInterval = messageInterval;
     this.messageCount = messageCount;
+    this.client = newClient(new InetSocketAddress("localhost", 7000));
   }
 
-  Flux<Long> createClientStream() {
-    return Flux.interval(Duration.ofMillis(clientInterval)).take(clientSize);
-  }
-
-  static Mono<RSocket> newClient(final InetSocketAddress serverAddress) {
+  private static Mono<RSocket> newClient(final InetSocketAddress serverAddress) {
     return RSocketFactory.connect()
         .transport(() -> TcpClientTransport.create(serverAddress))
         .start();
   }
 
-  Publisher<Payload> request(final long clientId) {
+  Flux<Payload> runApplication() {
+    return client.flux().flatMap(rsocket -> rsocket.requestChannel(request()));
+  }
+
+  private Flux<Payload> request() {
     return Flux.interval(Duration.ofMillis(messageInterval))
         .take(messageCount)
         .map(messageId -> createMessage(clientId, messageId));
   }
 
-  void showPayload(final Payload payload) {
+  static void showPayload(final Payload payload) {
     final String logMessage =
         String.format(
             "receive from server| data: %s, metadata: %s",
